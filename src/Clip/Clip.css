@@ -1,6 +1,6 @@
 
 
-#c-parent{
+.c-parent{
     --x-translate: 0;
     border: 1px solid goldenrod;
     width: 300px;
@@ -8,7 +8,7 @@
     transform: translate(var(--x-translate), 0px);
 }
 
-#c-parent:hover{
+.c-parent:hover{
 
     background-color: rgb(166, 166, 166);
     cursor: grab;
