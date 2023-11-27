@@ -9,11 +9,11 @@ export interface ClipConstructor {
     
     clipId: number,
     assetId: number,
-    start?: number,
-    leftTrim?: number,
-    rightTrim?: number,
-    volume?: number,
-    mute?: number,
+    start: number,
+    leftTrim: number,
+    rightTrim: number,
+    volume: number,
+    mute: number,
 
 }
 

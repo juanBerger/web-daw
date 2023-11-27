@@ -18,7 +18,9 @@ export abstract class Dispatcher {
         
         const buffer = new SharedArrayBuffer(Dispatcher.CLIP_MEMORY_SIZE);
         const view = new Uint8Array(buffer);
-        this._updateClipMemory(cc);
+        
+        
+        this._updateClipMemory(cc, buffer);
         AudioGraph.awp?.port.postMessage({clipMemory: {assetId: cc.assetId, clipId: cc.clipId, data: view}})
         Dispatcher.clipMemory[cc.clipId] = {cc: cc, data: buffer};
     }
@@ -32,11 +34,18 @@ export abstract class Dispatcher {
         AudioGraph.awp?.port.postMessage({assetMemory: {assetId: ac.assetId, data: ac.data}}, [ac.data])
     }
 
+    public UpdateClipMemory(cc: ClipConstructor){
+        this._updateClipMemory(cc, Dispatcher.clipMemory[cc.clipId])
+    }
 
-    protected _updateClipMemory(cc: ClipConstructor){
+    protected _updateClipMemory(cc: ClipConstructor, buffer: SharedArrayBuffer){
 
-        //write values in cc to the memory block
-        
+        const view = new Uint8Array(buffer);
+        Atomics.store(view, 0, cc.assetId);
+        Atomics.store(view, 4, cc.clipId);
+        Atomics.store(view, 8, cc.start);
+        //etc?
+        //iterate through the keys of the
 
     }
 
