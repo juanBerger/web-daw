@@ -8,7 +8,7 @@ import './ClipArea.css';
 
 const TEST_CC = {
             
-    clipId: 100,
+    clipId: 100, //maybe this should  hold the asset id in it in some way
     assetId: 12345,
     start: 100,
     leftTrim: 0,
