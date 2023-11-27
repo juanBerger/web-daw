@@ -1,34 +1,21 @@
 
 export class AudioGraph {
 
-    audioContext?: AudioContext;
+    audioContext: AudioContext;
     awp?: AudioWorkletNode;
 
-    public async initAudioContext(){
-        
+    constructor(){
         this.audioContext = new AudioContext({latencyHint: "playback"}); 
-        await this.audioContext.audioWorklet.addModule('./awp.js'); 
+    }
+
+    /**
+     * @param path local path to awp definition file. This method also connects the awp to the audio graph output
+     */
+    public async generateAWP(path: string) : Promise<void> {
+        await this.audioContext.audioWorklet.addModule(path); 
         this.awp = new AudioWorkletNode(this.audioContext, 'awp', {numberOfInputs: 1, numberOfOutputs: 2, outputChannelCount: [2, 2]});
-        this._initTransportMemory();
-
+        this.awp.connect(this.audioContext.destination);
     }
-
-    public addClipNode(){
-
-
-    }
-
-
-    protected _initTransportMemory(){
-
-        const sab = new SharedArrayBuffer(4);
-        const view = new Uint32Array(sab);
-        if (this.awp)
-            this.awp.port.postMessage({transport_sab: view});
-
-    }
-    
-
 
 
 }

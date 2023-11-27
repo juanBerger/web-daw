@@ -1,9 +1,24 @@
-import { useEffect, useState } from 'react'
-import Clip from '../Clip/Clip'
-import './ClipArea.css'
+import { useEffect, useState } from 'react';
 
-import { ClipConstructor } from '../Types';
+import { ClipConstructor, AssetConstructor } from '../Types';
 import { Dispatcher } from '../Core/Dispatcher';
+import { AudioGraph } from '../Core/AudioGraph';
+
+import Clip from '../Clip/Clip';
+import './ClipArea.css';
+
+
+const TEST_CC = {
+            
+    clipId: 100,
+    assetId: 123,
+    start: 100,
+    leftTrim: 0,
+    rightTrim: 0,
+    volume: 0,
+    mute: 0
+
+}
 
 export default function ClipArea(){
 
@@ -11,14 +26,10 @@ export default function ClipArea(){
 
     //this will setClipConstructors on load according to presets?
     useEffect(() => {
-        setClipConstructors([...clipConstructors, {
-            clipId: 100,
-            start: 100,
-            leftTrim: 0,
-            rightTrim: 0,
-            volume: 0,
-            mute: 0
-        }]);
+        
+        //Turn the clip constructors into clips
+        setClipConstructors([...clipConstructors, TEST_CC]);
+
 
     }, [])
 
