@@ -33,7 +33,7 @@ class AWP extends AudioWorkletProcessor {
         super();
     }
 
-    onMessage = (e: MessageEvent) => {
+    onMessage = (e) => {
 
         if (e.data.assetMemory){
             const am = e.data.assetMemory;
@@ -59,16 +59,16 @@ class AWP extends AudioWorkletProcessor {
     
 
 
-    process(inputList: Float32Array[][], outputList: Float32Array[][], parameters: Record<string, Float32Array>){
+    process(inputList, outputList, parameters){
 
         // if (this.Transport.isPlaying){
         //     this.Transport.tick();
         // }
 
-
+        return true
 
     }
 
 }
 
-registerProcessor('awp', AWP as any);
+registerProcessor('awp', AWP);

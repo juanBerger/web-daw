@@ -2,25 +2,20 @@
 import { useState } from "react"
 import ClipArea from "./CipArea/ClipArea"
 
-
-
-// const ag = new AudioGraph();
-// await ag.generateAWP('./Core/awp.js');
-// const dispatcher = new Dispatcher(ag.awp);
+import { AudioGraph } from './Core/AudioGraph';
 
 export default function App(){
 
     const [showStart, setShowStart] = useState<boolean>(true);
     
-    
     const handleOnClick = async () => {
         
-        setShowStart(!showStart)
+        if(showStart){
+            await AudioGraph.init();
+            await AudioGraph.audioContext.resume();
+            setShowStart(!showStart);
+        }        
     }
-
-
-    //conditionally render clipArea after button pressed
-
 
     return (
         <>
