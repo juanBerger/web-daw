@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "public/awp.js"],
+  "include": ["src", "public/awp.js", "public/FileWorker.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -4,13 +4,14 @@ import ClipArea from "./CipArea/ClipArea"
 
 import { AudioGraph } from './Core/AudioGraph';
 import { UIListener } from "./Core/UIListener";
-import { FileGetter } from "./Core/FileParser";
+import { FileGetter } from "./Core/FileGetter";
 
 export default function App(){
 
     const [showStart, setShowStart] = useState<boolean>(true);
 
     const handleOnClick = async () => {    
+        
         if(showStart){
             
             //set up audio process

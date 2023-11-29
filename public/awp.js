@@ -42,7 +42,9 @@ class AWP extends AudioWorkletProcessor {
     
         const outputDevice = outputList[0];
         const frames = outputDevice[0].length;
-        Atomics.load(this.transportMemory) == 1 ? Transport.toggle(1, frames) : Transport.toggle(0);
+        
+        if (this.transportMemory !== null)
+            Atomics.load(this.transportMemory) == 1 ? Transport.toggle(1, frames) : Transport.toggle(0);
         
         if (Transport.isPlaying){
 

@@ -5,7 +5,7 @@ import './ClipArea.css';
 
 import { ClipConstructor, AssetConstructor } from '../Types';
 import { Dispatcher } from '../Core/Dispatcher';
-import { FileGetter } from '../Core/FileParser';
+import { FileGetter } from '../Core/FileGetter';
 
 
 const TEST_CC = {
@@ -44,9 +44,8 @@ export default function ClipArea(){
         //     assetId: 123,
         //     data: bytes
         // }
-
         //Dispatcher.CreateAssetMemory(ac);
-        
+        FileGetter.Parse(TEST_PATH);
         
         //For each clip
         Dispatcher.CreateClipMemory(TEST_CC);

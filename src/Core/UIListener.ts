@@ -24,10 +24,10 @@ export class UIListener {
     }
 
     //probably dont need the timestamp since we are driven by the audio clock
-    
     static Render(timestamp: DOMHighResTimeStamp){
 
         const tc = Atomics.load(UIListener.tcMemory, 0);  
+        
         if (tc !== UIListener.lastTc){
 
             //Render Clock Display
