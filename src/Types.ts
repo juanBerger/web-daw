@@ -17,9 +17,21 @@ export interface ClipMemory {
 
 
 export interface AssetConstructor {
-
     assetId: number,
     data: ArrayBuffer
+}
+
+
+
+//File Handling
+export interface AudioData {
+
+    channels: number,
+    sampleRate: number,
+    dtype: number,
+    start: number,
+    end: number,
+
 }
 
 

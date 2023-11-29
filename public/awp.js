@@ -63,8 +63,8 @@ registerProcessor('awp', AWP);
 class Transport {
 
     static isPlaying = false;
-    static sampleRate = 48000;
-    static currentFrame = 0;
+    static sampleRate = 48000; 
+    static currentFrame = 0; //this needs like a setter that calls functions whenever this changes
     static tcMemory = null;
     static snapTo = 0;
 
@@ -74,6 +74,9 @@ class Transport {
      */
     static snap(time){
         Transport.currentFrame = time;
+         
+        if (Transport.tcMemory) //need a setter to avoid all this
+            Atomics.store(Transport.tcMemory, 0, Transport.currentFrame);
     }
 
 

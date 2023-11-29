@@ -2,6 +2,11 @@
 import { AssetConstructor, ClipConstructor, ClipMemory } from '../Types';
 import { AudioGraph } from './AudioGraph';
 
+/**
+ * 
+ * This is mainly in charge of adding and manipulating memory related to Clips
+ * 
+ */
 export class Dispatcher {
     
     static CLIP_MEMORY_SIZE = 25;

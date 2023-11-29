@@ -12,7 +12,6 @@ export class UIListener {
     protected static tcMemory: Int32Array //why doesn't this need an optional?
     protected static render = true;
     protected static lastTc = 0;
-    protected static lastTS = 0;
 
     static init(awp: AudioWorkletNode | undefined){
 
@@ -28,18 +27,15 @@ export class UIListener {
     
     static Render(timestamp: DOMHighResTimeStamp){
 
-        
-        const tc = Atomics.load(UIListener.tcMemory, 0);
-        //console.log(tc)
-        
-        // if (tc !== UIListener.lastTc){
+        const tc = Atomics.load(UIListener.tcMemory, 0);  
+        if (tc !== UIListener.lastTc){
 
-        //     //Render Clock Display
-        //     //Render Playhead position
+            //Render Clock Display
+            //Render Playhead position
 
-        //     UIListener.lastTc = tc;
-        //     console.log(tc)
-        // }
+            UIListener.lastTc = tc;
+            console.log(tc)
+        }
 
 
         if (UIListener.render)
