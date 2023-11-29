@@ -1,10 +1,4 @@
 
-
-/**
- * 
- * size: data size in bytes
- * 
- */
 export interface ClipConstructor {
     
     clipId: number,
