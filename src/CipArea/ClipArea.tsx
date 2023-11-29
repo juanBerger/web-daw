@@ -8,13 +8,13 @@ import './ClipArea.css';
 
 const TEST_CC = {
             
-    clipId: 100, //maybe this should  hold the asset id in it in some way
-    assetId: 12345,
+    clipId: 100, //ClipId should contain assetId
+    assetId: 200,
     start: 100,
-    leftTrim: 0,
-    rightTrim: 0,
-    volume: 0,
-    mute: 0
+    leftTrim: 1,
+    rightTrim: 2,
+    volume: 3,
+    mute: 4
 
 }
 
@@ -26,16 +26,16 @@ const TEST_AC = {
 export default function ClipArea(){
 
     const [clipConstructors, setClipConstructors] = useState<ClipConstructor[]>([]);
-    const [assetConstructors, setAssetConstructors] = useState<AssetConstructor[]>([]);
 
     //this will setClipConstructors on load according to presets?
     useEffect(() => {
         
-        //Turn clipConstructors into Clips and AssetConstructors into assets
-        setClipConstructors([...clipConstructors, TEST_CC]);
-        setAssetConstructors([...assetConstructors, TEST_AC]);
-
-
+        //For each clip
+        Dispatcher.CreateClipMemory(TEST_CC);
+        setClipConstructors([...clipConstructors, TEST_CC]);//each cc here renders a clip element
+        
+        //For each asset
+        Dispatcher.CreateAssetMemory(TEST_AC);
 
     }, [])
 

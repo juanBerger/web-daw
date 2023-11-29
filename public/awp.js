@@ -1,69 +1,56 @@
 
+/**
+ * BaseAudioContext is visible here so we can acces its properties (like sampleRate in the AWP constructor)
+ * along with these: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
+ */
+
 class AWP extends AudioWorkletProcessor {
 
-    // Transport = {
-        
-    //     isPlaying: false,
-    //     time: 0, //in samples
-    
-    //     /**
-    //      * @param {*} pixelNum
-    //      * @description: converts from pixel space to tranport space. This is called when user clicks around timeline
-    //      */
-    //     set: (pixelNum: number) => {
-
-    //     },
-
-
-    //     /**
-    //      * 
-    //      * @description: Increments transport position in samples, writes this to shared memory
-    //      */
-    //     tick: () => {
-
-    //     }
-
-    // };
-    
-
-    assets = {};
-
+    assetMemory = {};
+    clipMemory = {}
+    transportMemory = null;
 
     constructor(){
         super();
+        Transport.sampleRate = sampleRate;
+        this.port.onmessage = this.onMessage.bind(this);
     }
 
     onMessage = (e) => {
 
         if (e.data.assetMemory){
             const am = e.data.assetMemory;
-            //this.assets[am.assetId] = am.data;
-
+            this.assetMemory[am.assetId] = am.data
         }
 
+        else if (e.data.clipMemory){
+            const cm = e.data.clipMemory;
+            this.clipMemory[cm.clipId] = cm.data;
+        }
 
+        else if (e.data.transportMemory){
+            this.transportMemory = e.data.transportMemory;
+            console.log(this.transportMemory)
+        }
 
+        else if (e.data.tcMemory){
+            Transport.tcMemory = e.data.tcMemory;
+        }
 
-
-        // if (e.data.newClip){
-
-
-        // }
-
-        // else if (e.data.transport_sab){
-        //     console.log(e.data);
-        //     this.transport_sab = e.data.transport_sab;
-
-        // }
     }
     
-
-
     process(inputList, outputList, parameters){
+    
+        const outputDevice = outputList[0];
+        const frames = outputDevice[0].length;
+        Atomics.load(this.transportMemory) == 1 ? Transport.toggle(1, frames) : Transport.toggle(0);
+        
+        if (Transport.isPlaying){
 
-        // if (this.Transport.isPlaying){
-        //     this.Transport.tick();
-        // }
+            //get the audio and up it in the output buffers
+
+            
+        }
 
         return true
 
@@ -72,3 +59,51 @@ class AWP extends AudioWorkletProcessor {
 }
 
 registerProcessor('awp', AWP);
+
+
+class Transport {
+
+    static isPlaying = false;
+    static sampleRate = 48000;
+    static currentFrame = 0;
+    static tcMemory = null;
+    static snapTo = 0;
+
+    /**
+     * @param {*} time 
+     * @description snaps playhead to position as a result of UI change
+     */
+    static snap(time){
+        Transport.currentFrame = time;
+    }
+
+
+    /**
+     * @param {*} state : new transport state
+     * @param {*} frames : passed on to tick(frames), which in turn increments the current frame number by `frames`
+     */
+
+    static toggle(state, frames = 0){
+
+        if (state === 0){
+            Transport.isPlaying = false;
+            Transport.snap(Transport.snapTo);
+        }
+        
+        else if (state === 1){
+            Transport.isPlaying = true;
+            Transport.tick(frames);
+        }
+    }
+
+
+    /**
+     * @param {*} frames 
+     * @description ticks the clock by number of frames (frame = totalSamples / channels)
+     */
+    static tick(frames) {
+        Transport.currentFrame += frames;
+        Atomics.store(Transport.tcMemory, 0, Transport.currentFrame);
+    }
+
+}

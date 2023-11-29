@@ -1,52 +1,70 @@
 
-import { AssetConstructor, ClipConstructor } from '../Types';
+import { AssetConstructor, ClipConstructor, ClipMemory } from '../Types';
 import { AudioGraph } from './AudioGraph';
 
-
-export abstract class Dispatcher {
+export class Dispatcher {
     
     static CLIP_MEMORY_SIZE = 25;
-    static clipMemory?: any;
+    static clipMemory: ClipMemory = {};
     static assetMemory = {};
 
     /**
-     * 
      * @param cc : ClipConstructor 
-     * @description creates a 25 byte sized shared memory block that holds clip meta data. This is separate from the underlying asset
+     * @description : Creates a 25 byte sized shared memory block to hold clip meta data.
      */
-    public CreateClipMemory(cc: ClipConstructor) : void {        
+    public static CreateClipMemory(cc: ClipConstructor) : void {        
         
         const buffer = new SharedArrayBuffer(Dispatcher.CLIP_MEMORY_SIZE);
         const view = new Uint8Array(buffer);
-        
-        
-        this._updateClipMemory(cc, buffer);
-        AudioGraph.awp?.port.postMessage({clipMemory: {assetId: cc.assetId, clipId: cc.clipId, data: view}})
-        Dispatcher.clipMemory[cc.clipId] = {cc: cc, data: buffer};
+    
+        Dispatcher._writeClipMemory(cc, view);
+        AudioGraph.awp?.port.postMessage({clipMemory: {clipId: cc.clipId, data: view}})
+        Dispatcher.clipMemory[cc.clipId] = view; 
     }
 
     /**
-     * 
      * @param ac : AssetConstructor
-     * @description creates a memory buffer that is transferred to awp. One asset id points to one variable sized block that is owned by AWP
+     * @description : Transfers audio data to audio engine. This memory does not need to be shared
      */
-    public CreateAssetMemory(ac: AssetConstructor) : void {
+    public static CreateAssetMemory(ac: AssetConstructor) : void {
         AudioGraph.awp?.port.postMessage({assetMemory: {assetId: ac.assetId, data: ac.data}}, [ac.data])
     }
 
-    public UpdateClipMemory(cc: ClipConstructor){
-        this._updateClipMemory(cc, Dispatcher.clipMemory[cc.clipId])
+    /**
+     * @param cc : ClipConstructor
+     * @description : Public wrapper function for _writeClipMemory()
+     */
+    public static UpdateClipMemory(cc: ClipConstructor){
+        Dispatcher._writeClipMemory(cc, Dispatcher.clipMemory[cc.clipId])
     }
 
-    protected _updateClipMemory(cc: ClipConstructor, buffer: SharedArrayBuffer){
 
-        const view = new Uint8Array(buffer);
-        Atomics.store(view, 0, cc.assetId);
-        Atomics.store(view, 4, cc.clipId);
+
+
+    /**
+     * 
+     * @param cc : Tells us what values to write
+     * @param view : View to memeory block to write to
+     * @deecription :: Byte Structure is ::
+     * 
+     * | clipdId (4 bytes) | assetId (4 bytes) | start (4 bytes) | leftTrim (4 bytes) | rightTrrim (4 bytes)
+     * vloume (4 bytes (float32)) | mute (1 byte) |
+     * 
+     * ++ All 4 byte blocks are Int32 except where noted ++
+     * 
+     */
+
+    protected static _writeClipMemory(cc: ClipConstructor, view: Uint8Array){
+
+        //can't iterate through the object since the order of enumeration is not guranteed
+        Atomics.store(view, 0, cc.clipId);
+        Atomics.store(view, 4, cc.assetId);
         Atomics.store(view, 8, cc.start);
-        //etc?
-        //iterate through the keys of the
-
+        Atomics.store(view, 12, cc.leftTrim);
+        Atomics.store(view, 16, cc.rightTrim);
+        Atomics.store(view, 20, cc.volume);
+        Atomics.store(view, 24, cc.mute)
+        
     }
 
 

@@ -11,17 +11,15 @@ export interface ClipConstructor {
 
 }
 
+export interface ClipMemory {
+    [key: number] : Uint8Array
+}
+
 
 export interface AssetConstructor {
 
     assetId: number,
     data: ArrayBuffer
-}
-
-
-export interface AssetMessage {
-    
-
 }
 
 
