@@ -30,7 +30,6 @@ class AWP extends AudioWorkletProcessor {
 
         else if (e.data.transportMemory){
             this.transportMemory = e.data.transportMemory;
-            console.log(this.transportMemory)
         }
 
         else if (e.data.tcMemory){

@@ -9,17 +9,44 @@
  */
 export class UIListener {
 
+    protected static tcMemory: Int32Array //why doesn't this need an optional?
+    protected static render = true;
+    protected static lastTc = 0;
+    protected static lastTS = 0;
+
     static init(awp: AudioWorkletNode | undefined){
 
         const tcBuffer = new SharedArrayBuffer(4);
-        const tcView = new Uint8Array(tcBuffer);
-        awp?.port.postMessage({tcMemory: tcView})
+        UIListener.tcMemory = new Int32Array(tcBuffer);
+        awp?.port.postMessage({tcMemory: UIListener.tcMemory})
 
-    }    
+        window.requestAnimationFrame(UIListener.Render)
+
+    }
+
+    //probably dont need the timestamp since we are driven by the audio clock
+    
+    static Render(timestamp: DOMHighResTimeStamp){
+
+        
+        const tc = Atomics.load(UIListener.tcMemory, 0);
+        //console.log(tc)
+        
+        // if (tc !== UIListener.lastTc){
+
+        //     //Render Clock Display
+        //     //Render Playhead position
+
+        //     UIListener.lastTc = tc;
+        //     console.log(tc)
+        // }
 
 
+        if (UIListener.render)
+            window.requestAnimationFrame(UIListener.Render);
+        
 
-
+    }
 
 
 }
