@@ -21,8 +21,13 @@ export default function Clip(props: {cc: ClipConstructor}) {
 
     const handleMouseUp = (e: MouseEvent) =>{
         e.preventDefault();
-        setIsMouseDown(!isMouseDown);       
+        setIsMouseDown(!isMouseDown);     
     }
+
+    const handleMouseLeave = (e: MouseEvent) => {
+        e.preventDefault();
+        setIsMouseDown(false);
+    }   
 
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -30,8 +35,9 @@ export default function Clip(props: {cc: ClipConstructor}) {
         e.preventDefault();
 
         if (isMouseDown){
-            Dispatcher.updateClipX(e.clientX);
-            setStart(String(e.clientX) + 'px');
+            const pos = e.clientX - e.nativeEvent.offsetX;
+            Dispatcher.updateClipX(pos);
+            setStart(String(pos) + 'px');
         }
 
     }
@@ -40,10 +46,11 @@ export default function Clip(props: {cc: ClipConstructor}) {
         <div className='c-parent' 
             id={String(props.cc.clipId)} 
             style={{['--x-left' as any]: start}}
+            onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp} 
             onMouseDown={handleMouseDown} 
             onMouseMove={handleMouseMove}>
-            <p>{isMouseDown}</p>
+            <p>{String(isMouseDown)}</p>
         </div>
     )
 

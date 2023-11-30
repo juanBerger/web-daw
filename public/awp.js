@@ -20,8 +20,9 @@ class AWP extends AudioWorkletProcessor {
 
         if (e.data.assetMemory){
             const am = e.data.assetMemory;
-            this.assetMemory[am.assetId] = am.data
+            this.assetMemory[am.assetId] = am;
             console.log(this.assetMemory);
+            
         }
 
         else if (e.data.clipMemory){
@@ -39,6 +40,7 @@ class AWP extends AudioWorkletProcessor {
 
     }
     
+    //called @3ms 1000 / (sr / blockSize)
     process(inputList, outputList, parameters){
     
         const outputDevice = outputList[0];
@@ -49,7 +51,7 @@ class AWP extends AudioWorkletProcessor {
         
         if (Transport.isPlaying){
 
-            //get the audio and up it in the output buffers
+            //get the audio and put it in the output buffers
 
             
         }

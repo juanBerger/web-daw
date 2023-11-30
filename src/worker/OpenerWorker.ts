@@ -1,6 +1,6 @@
 
 import { AudioData } from "../Types";
-
+import { v5 as uuidv5 } from 'uuid'
 onmessage = async e => {
 
     if (e.data.paths){
@@ -24,7 +24,7 @@ onmessage = async e => {
         results.forEach(result => {
 
             if (result.status === 'fulfilled'){
-                postMessage({result: 'ok', data: result.value}, [result.value]);
+                postMessage({result: 'ok', data: result.value}, [result.value.data]);
             }
             else if (result.status === 'rejected') {
                 postMessage({result: 'error', reason: result.reason});
@@ -35,6 +35,8 @@ onmessage = async e => {
 
 class Parser {
 
+    protected static UUID_NAMESPACE = 'd3346342-8b07-41f4-9091-a10774e7c50d';
+
     public async Parse(path: string) : Promise<any> {
 
         let audioData: AudioData | any;
@@ -42,9 +44,11 @@ class Parser {
             
             const bytes = await this._getBytes(path);
             const type = this._getType(bytes);
+            const assetId = this._getAssetId(path);
+
             switch (type){
                 case 'wav':
-                    audioData = this._getWav(bytes);
+                    audioData = this._getWav(bytes, assetId);
                     break;
 
                 default:
@@ -85,8 +89,12 @@ class Parser {
         return 'wav'
     }
 
+    protected _getAssetId(path: string){
+        return uuidv5(path, Parser.UUID_NAMESPACE);
+    }
+
     //maybe improve this
-    protected _getWav (bytes: ArrayBuffer) : AudioData {
+    protected _getWav (bytes: ArrayBuffer, assetId: string) : AudioData {
 				
         //console.log(String.fromCharCode(...view.slice(0, 4)))
         const END_OF_FILE = 300; //this is fake
@@ -99,6 +107,7 @@ class Parser {
     
         const audioData = {
             
+            assetId: assetId,
             channels: channels, 
             sampleRate: sampleRate, 
             dtype: dtype, 

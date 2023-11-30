@@ -4,7 +4,7 @@ import { Dispatcher } from '../Core/Dispatcher';
 export class FileOpener{
 
     protected static WORKER_PATH = '../worker/OpenerWorker.ts';
-    protected static BUILD_PATH_PREFIX = '../';
+    protected static BUILD_PATH_PREFIX = '../assets/';
 
     /**
      * @param paths : Array of file paths
@@ -15,16 +15,12 @@ export class FileOpener{
     public static Open(paths: string[]) : ArrayBuffer | any {
 
         const w = new Worker(new URL(FileOpener.WORKER_PATH, import.meta.url), {type: 'module'})
-        w.postMessage({paths: paths})
+        const prefixed = paths.map(path => FileOpener.BUILD_PATH_PREFIX + path)
+        w.postMessage({paths: prefixed})
         w.onmessage = e => {
             
             if (e.data.result === 'ok'){
-                
-                const bytes = e.data.data;
-                Dispatcher.CreateAssetMemory({
-                    assetId: 123, //this function should have assetIds for each path passed into it
-                    data: bytes
-                })
+                Dispatcher.CreateAssetMemory(e.data.data);
                 
             }
                 

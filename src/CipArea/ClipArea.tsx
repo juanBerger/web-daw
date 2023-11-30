@@ -19,12 +19,14 @@ const TEST_CC = {
 
 }
 
-const TEST_PATH = '../assets/SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(MELODY)_APM.wav';
-
-// const TEST_AC = {
-//     assetId: 12345,
-//     data: new ArrayBuffer(100)
-// }
+const TEST_FILES = [
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(808)_APM.wav',
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(HOOK)_APM.wav',
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(MELODY)_APM.wav',
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(MONEY_GUN)_APM.wav',
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(PERC)_APM.wav',
+    'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(VERSE)_APM.wav'
+]
 
 export default function ClipArea(){
 
@@ -35,7 +37,7 @@ export default function ClipArea(){
     useEffect(() => {
         
         //Asset paths
-        FileOpener.Open([TEST_PATH]); //takes an array of paths
+        FileOpener.Open(TEST_FILES); //takes an array of paths
         
         //For each clip
         Dispatcher.CreateClipMemory(TEST_CC);
