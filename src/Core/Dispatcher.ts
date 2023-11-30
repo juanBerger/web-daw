@@ -1,5 +1,5 @@
 
-import { AssetConstructor, ClipConstructor, ClipMemory } from '../Types';
+import { AudioData, ClipConstructor, ClipMemory } from '../Types';
 import { AudioGraph } from './AudioGraph';
 
 /**
@@ -28,11 +28,11 @@ export class Dispatcher {
     }
 
     /**
-     * @param ac : AssetConstructor
+     * @param ad : AudioData
      * @description : Transfers audio data to audio engine. This memory does not need to be shared
      */
-    public static CreateAssetMemory(ac: AssetConstructor) : void {
-        AudioGraph.awp?.port.postMessage({assetMemory: {assetId: ac.assetId, data: ac.data}}, [ac.data])
+    public static CreateAssetMemory(ad: AudioData) : void {
+        AudioGraph.awp?.port.postMessage({assetMemory: ad}, [ad.data])
     }
 
     /**
