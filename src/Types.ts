@@ -21,8 +21,6 @@ export interface AssetConstructor {
     data: ArrayBuffer
 }
 
-
-
 //File Handling
 export interface AudioData {
 
@@ -31,6 +29,7 @@ export interface AudioData {
     dtype: number,
     start: number,
     end: number,
+    data: ArrayBuffer
 
 }
 

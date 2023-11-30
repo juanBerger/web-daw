@@ -21,6 +21,7 @@ class AWP extends AudioWorkletProcessor {
         if (e.data.assetMemory){
             const am = e.data.assetMemory;
             this.assetMemory[am.assetId] = am.data
+            console.log(this.assetMemory);
         }
 
         else if (e.data.clipMemory){

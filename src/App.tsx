@@ -4,7 +4,6 @@ import ClipArea from "./CipArea/ClipArea"
 
 import { AudioGraph } from './Core/AudioGraph';
 import { UIListener } from "./Core/UIListener";
-import { FileGetter } from "./Core/FileGetter";
 
 export default function App(){
 
@@ -20,9 +19,6 @@ export default function App(){
             
             //set up render loop (listens for changes that originate in the audio process)
             UIListener.init(AudioGraph.awp); //this should listen to File Parser messages maybe?
-
-            //set up file parser
-            //FileGetter.init();
 
             setShowStart(!showStart);
         }        
