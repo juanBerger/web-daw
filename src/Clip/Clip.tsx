@@ -1,6 +1,8 @@
 
 import { useState, useRef, MouseEvent } from 'react';
 import { MouseHandler } from '../Core/MouseHandler';
+import { ClipConstructor } from '../Core/ClipConstructor';
+import { FramesToPixels } from '../Core/Utils';
 
 import './Clip.css'
 
@@ -24,14 +26,12 @@ export default function Clip(props: {cc: ClipConstructor}) {
             const tOffset = e.clientY - clipRef.current.getBoundingClientRect().top;
             MouseHandler.registerComponent({ref: updatePosition, offsets: {l: lOffset, t: tOffset}});
         }
-
     }
 
     const updatePosition = (l: number, t: number) : void => {
         
         setLeft(String(l) + 'px');
         setTop(String(t) + 'px');
-        
         //update shared memory 
         
     }
@@ -44,7 +44,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
     return (
         <div ref={clipRef} className='c-parent' 
             id={String(props.cc.clipId)} 
-            style={{['--x' as any]: left, ['--y' as any]: top}}
+            style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: String(FramesToPixels(props.cc.length, 'full-length')) + 'px'}}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseMove={handleMouseMove}>

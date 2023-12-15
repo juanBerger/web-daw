@@ -2,6 +2,7 @@
 import { AudioData } from '../Types';
 import { AudioGraph } from './AudioGraph';
 import { ClipConstructor } from './ClipConstructor';
+import { RandomInt32, BytesToFrames } from './Utils'
 
 export class FileOpener{
 
@@ -10,19 +11,26 @@ export class FileOpener{
 
     /**
      * @param paths : Array of file paths
-     * @param createClips : If true, creates new clips based on new assets with default values
-     * @description : Parses files and passes memory to awp
+     * @description : Parses files, passes audio data to awp
      */
 
-    public static async Open(paths: string[], createClips = false) : Promise<ClipConstructor[]> {
-        
-        const ads = await FileOpener._parse(paths);
-        if (createClips){
-            return ads.map(ad => 
-                new ClipConstructor(AudioGraph, ad.assetId, ad.assetId, 0, 0))
-        }
+    public static async Open(paths: string[]) : Promise<ClipConstructor[] | void> {
+        await FileOpener._parse(paths);
     }
-    
+
+
+    /**
+     * @param paths : Array of file paths
+     * @description : Parses files, passes audio data to awp and generates clips from them with default values
+     */
+    public static async OpenAndGenerateClips(paths: string[]) : Promise<ClipConstructor[]> {
+        let defaultTop = -20; //in pixels, a hack for now
+        const ads = await FileOpener._parse(paths);
+        return ads.map(ad => 
+            new ClipConstructor(AudioGraph, RandomInt32(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad)))
+    }
+
+
     /**
      * 
      * @param paths : An array of file paths,
@@ -42,7 +50,7 @@ export class FileOpener{
                     if (e.data.result === 'ok'){
                         AudioGraph.awp?.port.postMessage({assetMemory: e.data.audioData}, [e.data.audioData.data])
                         e.data.data = 'detached';
-                        resolve(e.data); //data member will be detached
+                        resolve(e.data.audioData); //data member will be detached
                     }
                     
                     else if (e.data.result === 'error'){
@@ -61,23 +69,4 @@ export class FileOpener{
             .map(result => result.value);
     }
 
-    
-
-
 }
-
-//Maybe a few ways of opening memory
-/**
- *  - Paths (array) -> Leads to assets
- *  - 
- *  - Clips (array of objects) --> leads to (or are) ClipConstructors which lead to clips
- *  -
- * 
- * The above are spearate however there has to be any easy way to <make> clips depend on paths -- this would be the case with drag and drop
- * 
- * 
- * 
- * 
- *  
- */
-

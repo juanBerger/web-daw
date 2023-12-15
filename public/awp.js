@@ -4,10 +4,21 @@
  * along with these: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
  */
 
+/*
+* CLIP SHARED MEMORY BLOCK
+* 
+* | clipdId (4 bytes) | assetId (4 bytes) | left (4 bytes) | length (4 bytes) |
+* | leftTrim (4 bytes) | rightTrrim (4 bytes) |
+* | vloume (4 bytes float32) | mute (1 byte uint8) |
+* 
+* ++ All 4 byte blocks are Int32 except where noted ++
+* 
+*/
+
 class AWP extends AudioWorkletProcessor {
 
-    assetMemory = {};
-    clipMemory = {}
+    assetMemory = {}; //this is not shared
+    clipMemory = {} //this is shared
     transportMemory = null;
 
     constructor(){
@@ -28,6 +39,7 @@ class AWP extends AudioWorkletProcessor {
         else if (e.data.clipMemory){
             const cm = e.data.clipMemory;
             this.clipMemory[cm.clipId] = cm.data;
+            console.log(cm);
         }
 
         else if (e.data.transportMemory){
@@ -40,25 +52,77 @@ class AWP extends AudioWorkletProcessor {
 
     }
     
+    _getToRender(frame, blockSize) {
+
+        const toRender = [];
+        for (key of this.clipMemory){
+            const clip = this.clipMemory[key];
+            const left = Atomics.load(clip.data, 8);
+            const mute = Atomics.load(clip.data, 28);
+
+            //is left between (tc @ idx = 0) and (tc @ idx = end of block
+            //is muted false
+            if ((left >= frame && left < frame + blockSize) && mute !== 1){ 
+                toRender.push({
+                    assetId: Atomics.load(clip.data, 4),
+                    left: left,
+                    length: Atomics.load(clip.data, 12),
+                    leftTrim: Atomics.load(clip.data, 16),
+                    rightTrim: Atomics.load(clip.data, 20),
+                    volume: Atomics.load(clip.data, 24),
+                })
+            }
+        }
+
+    }
+
+
     //called @3ms 1000 / (sr / blockSize)
     process(inputList, outputList, parameters){
-    
-        const outputDevice = outputList[0];
-        const frames = outputDevice[0].length;
         
-        if (this.transportMemory !== null)
-            Atomics.load(this.transportMemory) == 1 ? Transport.toggle(1, frames) : Transport.toggle(0);
+        const outputDevice = outputList[0];
+        const blocksize = outputDevice[0].length;
+        
+        if (this.transportMemory)
+            Atomics.load(this.transportMemory, 0) == 1 ? Transport.toggle(1) : Transport.toggle(0);
         
         if (Transport.isPlaying){
 
+            const renderObjs = this._getToRender(Transport.currentFrame, blocksize)
+            
+            for (let i = 0; i < blocksize; i++){
+
+                //accumulate left and right here
+                const p = Transport.currentFrame + i;
+                for (let j = 0; j < renderObjs.length; j++){
+                    
+                    //check if it's time for this render object
+                    const renderObj = renderObjs[j];
+                    if (renderObj.left < p)
+                        continue
+
+                    const assetObj = this.assetMemory[renderObj.assetId];
+                    
+
+
+
+                    const sample_l = 
+                    
+
+
+                }
+
+            }
+            
+            
+            
+            //scan through memory block
+
+
             
 
 
-
-
-            //get the audio and put it in the output buffers
-
-            
+            Transport.tick();
         }
 
         return true
@@ -95,7 +159,7 @@ class Transport {
      * @param {*} frames : passed on to tick(frames), which in turn increments the current frame number by `frames`
      */
 
-    static toggle(state, frames = 0){
+    static toggle(state){
 
         if (state === 0){
             Transport.isPlaying = false;
@@ -104,17 +168,16 @@ class Transport {
         
         else if (state === 1){
             Transport.isPlaying = true;
-            Transport.tick(frames);
         }
     }
 
 
     /**
-     * @param {*} frames 
+     * @param {*} blocksize 
      * @description ticks the clock by number of frames (frame = totalSamples / channels)
      */
-    static tick(frames) {
-        Transport.currentFrame += frames;
+    static tick(blocksize) {
+        Transport.currentFrame += blocksize;
         Atomics.store(Transport.tcMemory, 0, Transport.currentFrame);
     }
 

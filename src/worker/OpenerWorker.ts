@@ -1,6 +1,8 @@
 
 import { AudioData } from "../Types";
 import { v5 as uuidv5 } from 'uuid'
+import { RandomInt32 } from "../Core/Utils";
+
 onmessage = async e => {
 
     if (e.data.path){
@@ -26,7 +28,8 @@ class Parser {
             
             const bytes = await this._getBytes(path);
             const type = this._getType(bytes);
-            const assetId = this._getAssetId(path);
+            //const assetId = this._getAssetId(path);
+            const assetId = RandomInt32();
 
             switch (type){
                 case 'wav':
@@ -71,12 +74,13 @@ class Parser {
         return 'wav'
     }
 
+    //Move this to utils
     protected _getAssetId(path: string){
         return uuidv5(path, Parser.UUID_NAMESPACE);
     }
 
     //maybe improve this
-    protected _getWav (bytes: ArrayBuffer, assetId: string) : AudioData {
+    protected _getWav (bytes: ArrayBuffer, assetId: number) : AudioData {
 				
         //console.log(String.fromCharCode(...view.slice(0, 4)))
         const END_OF_FILE = 300; //this is fake
@@ -86,7 +90,7 @@ class Parser {
         const channels = view.slice(22, 24)[0];
         const sampleRate = new Int32Array(view.buffer.slice(24, 28))[0];
         const dtype = view.slice(34, HEADER_LENGTH)[0];
-    
+
         const audioData = {
             
             assetId: assetId,

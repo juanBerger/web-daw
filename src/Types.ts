@@ -20,7 +20,7 @@ export interface ClipMemory {
  */
 export interface AudioData {
 
-    assetId: string,
+    assetId: number,
     channels: number,
     sampleRate: number,
     dtype: number,
