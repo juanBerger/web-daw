@@ -3,33 +3,15 @@ import { AudioData } from "../Types";
 import { v5 as uuidv5 } from 'uuid'
 onmessage = async e => {
 
-    if (e.data.paths){
+    if (e.data.path){
         
-        const paths = e.data.paths;
-        const promises = paths.map((path: string) => {
-
-            return new Promise(async (resolve, reject) => {            
-                try {
-                    const p = new Parser();
-                    const result = await p.Parse(path);
-                    resolve(result);
-                } catch (error){
-                    reject(error);
-                }
-            })
-
-        })
-
-        const results = await Promise.allSettled(promises);
-        results.forEach(result => {
-
-            if (result.status === 'fulfilled'){
-                postMessage({result: 'ok', data: result.value}, [result.value.data]);
-            }
-            else if (result.status === 'rejected') {
-                postMessage({result: 'error', reason: result.reason});
-            }
-        })
+        try {
+            const p = new Parser();
+            const result = await p.Parse(e.data.path);
+            postMessage({result: 'ok', audioData: result}, [result.data]);
+        } catch (error){
+            postMessage({result: 'error', reason: error});
+        }
     }
 }
 
@@ -145,3 +127,36 @@ class Parser {
     
     }
 }
+
+
+         
+
+    
+
+
+
+        // const paths = e.data.paths;
+        // const promises = paths.map((path: string) => {
+
+        //     return new Promise(async (resolve, reject) => {            
+        //         try {
+        //             const p = new Parser();
+        //             const result = await p.Parse(path);
+        //             resolve(result);
+        //         } catch (error){
+        //             reject(error);
+        //         }
+        //     })
+
+        // })
+
+        // const results = await Promise.allSettled(promises);
+        // results.forEach(result => {
+
+        //     if (result.status === 'fulfilled'){
+        //         postMessage({result: 'ok', data: result.value}, [result.value.data]);
+        //     }
+        //     else if (result.status === 'rejected') {
+        //         postMessage({result: 'error', reason: result.reason});
+        //     }
+        // })

@@ -1,76 +1,56 @@
 
-import { useState, MouseEvent } from 'react';
-import { Dispatcher } from '../Core/Dispatcher';
+import { useState, useRef, MouseEvent } from 'react';
+import { MouseHandler } from '../Core/MouseHandler';
+
 import './Clip.css'
 
-import { ClipConstructor } from '../Types';
 
 export default function Clip(props: {cc: ClipConstructor}) {
 
-
-    //const [canSlide, setCanSlide] = useState(false);
-    const [isMouseDown, setIsMouseDown] = useState(false);
-    const [start, setStart] = useState(String(props.cc.start) + 'px');
-
-
-    const handleMouseDown = (e: MouseEvent) =>{
-        e.preventDefault();
-        setIsMouseDown(!isMouseDown);
-        
-    }
-
-    const handleMouseUp = (e: MouseEvent) =>{
-        e.preventDefault();
-        setIsMouseDown(!isMouseDown);     
-    }
+    const [left, setLeft] = useState(String(props.cc.left) + 'px');
+    const [top, setTop] = useState(String(props.cc.top) + 'px');
+    const clipRef = useRef<HTMLDivElement>(null);
 
     const handleMouseLeave = (e: MouseEvent) => {
-        e.preventDefault();
-        setIsMouseDown(false);
-    }   
+        
+    }
 
-
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseDown = (e: MouseEvent) => {
         
         e.preventDefault();
-
-        if (isMouseDown){
-            const pos = e.clientX - e.nativeEvent.offsetX;
-            Dispatcher.updateClipX(pos);
-            setStart(String(pos) + 'px');
+        
+        if (clipRef.current){
+            const lOffset = e.clientX - clipRef.current.getBoundingClientRect().left;
+            const tOffset = e.clientY - clipRef.current.getBoundingClientRect().top;
+            MouseHandler.registerComponent({ref: updatePosition, offsets: {l: lOffset, t: tOffset}});
         }
 
     }
 
+    const updatePosition = (l: number, t: number) : void => {
+        
+        setLeft(String(l) + 'px');
+        setTop(String(t) + 'px');
+        
+        //update shared memory 
+        
+    }
+
+
+    const handleMouseMove = (e: MouseEvent) => {
+        
+    }
+
     return (
-        <div className='c-parent' 
+        <div ref={clipRef} className='c-parent' 
             id={String(props.cc.clipId)} 
-            style={{['--x-left' as any]: start}}
+            style={{['--x' as any]: left, ['--y' as any]: top}}
+            onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
-            onMouseUp={handleMouseUp} 
-            onMouseDown={handleMouseDown} 
             onMouseMove={handleMouseMove}>
-            <p>{String(isMouseDown)}</p>
+            <p>I'm a clip</p>
         </div>
     )
 
 
 }
-
-
-
-
-        // if (isClicked){
-
-            
-
-        //     console.log(e.clientX);
-        //     const elem = document.querySelector('.c-parent') as HTMLElement;
-        //     const pos = Number(elem.style.getPropertyValue('--x-translate')) + e.clientX; 
-        //     elem.style.setProperty('--x-translate', String(pos) + 'px');
-        //     console.log(elem.style.getPropertyValue('--x-translate'));
-            
-        // }
-
-        
-

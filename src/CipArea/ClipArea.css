@@ -2,8 +2,11 @@
 
 #ca-parent{
 
-    height: 100%;
+    position: relative;
     width: 100%;
-    display: grid;
+    height: 100%;
 
+    /* gap: 6px;
+    display: grid;
+    grid-template-columns: 1fr;     */
 }

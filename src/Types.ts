@@ -1,20 +1,23 @@
 
-export interface ClipConstructor {
+// export interface ClipConstructor {
     
-    clipId: number,
-    assetId: number,
-    start: number,
-    leftTrim: number,
-    rightTrim: number,
-    volume: number,
-    mute: number,
-
-}
+//     clipId: number,
+//     assetId: number,
+//     left: number,
+//     top: number,
+//     leftTrim: number,
+//     rightTrim: number,
+//     volume: number,
+//     mute: number,
+// }
 
 export interface ClipMemory {
     [key: number] : Uint8Array
 }
 
+/**
+ * start, end refer to indexes of 'data'. This accounts for headers and meta data chunks at the end
+ */
 export interface AudioData {
 
     assetId: string,
@@ -25,6 +28,11 @@ export interface AudioData {
     end: number,
     data: ArrayBuffer
 
+}
+
+export interface PosCallback {
+    ref: any,
+    offsets: {l: number, t: number}
 }
 
 

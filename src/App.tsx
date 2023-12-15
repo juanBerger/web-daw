@@ -4,6 +4,7 @@ import ClipArea from "./CipArea/ClipArea"
 
 import { AudioGraph } from './Core/AudioGraph';
 import { UIListener } from "./Core/UIListener";
+import { MouseHandler } from "./Core/MouseHandler";
 
 export default function App(){
 
@@ -19,6 +20,7 @@ export default function App(){
             
             //set up render loop (listens for changes that originate in the audio process)
             UIListener.init(AudioGraph.awp); //this should listen to File Parser messages maybe?
+            MouseHandler.init();
 
             setShowStart(!showStart);
         }        

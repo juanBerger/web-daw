@@ -51,6 +51,11 @@ class AWP extends AudioWorkletProcessor {
         
         if (Transport.isPlaying){
 
+            
+
+
+
+
             //get the audio and put it in the output buffers
 
             

@@ -41,7 +41,6 @@ export class UIListener {
         if (UIListener.render)
             window.requestAnimationFrame(UIListener.Render);
         
-
     }
 
 
