@@ -2,7 +2,7 @@
 import { AudioData } from '../Types';
 import { AudioGraph } from './AudioGraph';
 import { ClipConstructor } from './ClipConstructor';
-import { RandomInt32, BytesToFrames } from './Utils'
+import { RandomInt32, BytesToFrames, RandomUInt8 } from './Utils'
 
 export class FileOpener{
 
@@ -27,7 +27,7 @@ export class FileOpener{
         let defaultTop = -20; //in pixels, a hack for now
         const ads = await FileOpener._parse(paths);
         return ads.map(ad => 
-            new ClipConstructor(AudioGraph, RandomInt32(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad)))
+            new ClipConstructor(AudioGraph, RandomUInt8(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad)))
     }
 
 

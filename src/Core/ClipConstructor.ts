@@ -30,8 +30,6 @@ export class ClipConstructor {
         this.volume = _volume;
         this.mute = _mute
 
-        console.log(this.length);
-
         this._syncSharedMemory();
         AudioGraph.awp?.port.postMessage({clipMemory: {clipId: this.clipId, data: new Uint8Array(this.data)}})
     }
@@ -54,6 +52,7 @@ export class ClipConstructor {
     protected _syncSharedMemory () {
 
         const view = new Uint8Array(this.data);
+        //console.log('Syncing Clip Memory')
 
         Atomics.store(view, 0, this.clipId); //
         Atomics.store(view, 4, this.assetId);

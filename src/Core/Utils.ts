@@ -5,6 +5,10 @@ export function RandomInt32() : number {
     return Math.floor(Math.random() * Math.pow(2, 32));
 }
 
+export function RandomUInt8() : number {
+    return Math.floor(Math.random() * (Math.pow(2, 8) - 1));
+}
+
 export function BytesToFrames(ad: AudioData) : number {
     
     const byteLength = ad.end - ad.start;
@@ -15,6 +19,9 @@ export function BytesToFrames(ad: AudioData) : number {
 
 }
 
+
+
+
 export function FramesToPixels(frames: number, zoomLevel: string) : number {
 
     let pixels = 200;
@@ -23,12 +30,10 @@ export function FramesToPixels(frames: number, zoomLevel: string) : number {
         case 'full-length':
             const viewport = document.getElementById('ca-parent');
             if (viewport)
-                pixels = Math.floor(frames / viewport?.clientWidth);
-            console.log(pixels)
+                pixels = viewport?.clientWidth;
             break;
     }
 
     return pixels
-
 
 }
