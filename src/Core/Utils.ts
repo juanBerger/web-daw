@@ -20,6 +20,20 @@ export function BytesToFrames(ad: AudioData) : number {
 }
 
 
+export function PixelsToFrames(pixels: number, zoomLevel: string) : number {
+
+    let frames = 0;
+    switch (zoomLevel){
+
+        case "5":
+            frames = pixels * 100 
+            break;
+
+    }
+
+    return frames
+}
+
 
 
 export function FramesToPixels(frames: number, zoomLevel: string) : number {

@@ -1,4 +1,6 @@
 import { AudioGraph } from "./AudioGraph";
+import { PixelsToFrames } from "./Utils";
+import { ZoomHandler } from "./ZoomHandler";
 
 export class ClipConstructor {
 
@@ -12,6 +14,17 @@ export class ClipConstructor {
     volume?: number = 1 //db
     mute?: number = 0
     data: SharedArrayBuffer = new SharedArrayBuffer(29)
+    sharedViews: any = {
+
+        clipId: new Int32Array(this.data.slice(0, 4)),
+        assetId: new Int32Array(this.data.slice(4, 8)),
+        left: new Int32Array(this.data.slice(8, 12)),
+        length: new Int32Array(this.data.slice(12, 16)),
+        leftTrim: new Int32Array(this.data.slice(16, 20)),
+        rightTrim: new Int32Array(this.data.slice(20, 24)),
+        volume: new Int32Array(this.data.slice(24, 28)),
+        mute: new Uint8Array(this.data.slice(28, 29))
+    }
     audioGraph: AudioGraph
 
     constructor(_audioGraph: AudioGraph, _clipId: number, _assetId: number, 
@@ -30,8 +43,10 @@ export class ClipConstructor {
         this.volume = _volume;
         this.mute = _mute
 
+        console.log(this.sharedViews);
         this._syncSharedMemory();
-        AudioGraph.awp?.port.postMessage({clipMemory: {clipId: this.clipId, data: new Uint8Array(this.data)}})
+        AudioGraph.awp?.port.postMessage({clipMemory: {clipId: this.clipId, data: this.sharedViews}})
+        
     }
 
     /**
@@ -48,23 +63,26 @@ export class ClipConstructor {
      * 
      */
 
-    //need to add length here?
     protected _syncSharedMemory () {
 
-        const view = new Uint8Array(this.data);
-        //console.log('Syncing Clip Memory')
+        Atomics.store(this.sharedViews.clipId, 0, this.clipId); //
+        Atomics.store(this.sharedViews.assetId, 0, this.assetId);
+        Atomics.store(this.sharedViews.left, 0, this.left);
+        Atomics.store(this.sharedViews.length, 0, this.length);
 
-        Atomics.store(view, 0, this.clipId); //
-        Atomics.store(view, 4, this.assetId);
-        Atomics.store(view, 8, this.left);
-        Atomics.store(view, 12, this.length);
+        this.leftTrim ? Atomics.store(this.sharedViews.leftTrim, 0, this.leftTrim) : Atomics.store(this.sharedViews.leftTrim, 0, 0);
+        this.rightTrim ? Atomics.store(this.sharedViews.rightTrim, 0, this.rightTrim) : Atomics.store(this.sharedViews.rightTrim, 0, 0); 
+        this.volume ? Atomics.store(this.sharedViews.volume, 0, this.volume) : Atomics.store(this.sharedViews.volume, 0, 1);
+        this.mute ? Atomics.store(this.sharedViews.mute, 0, this.mute) : Atomics.store(this.sharedViews.mute, 0, 0);
 
-        this.leftTrim ? Atomics.store(view, 16, this.leftTrim) : Atomics.store(view, 16, 0);
-        this.rightTrim ? Atomics.store(view, 20, this.rightTrim) : Atomics.store(view, 20, 0); 
-        this.volume ? Atomics.store(view, 24, this.volume) : Atomics.store(view, 24, 1);
-        this.mute ? Atomics.store(view, 28, this.mute) : Atomics.store(view, 28, 0);
-    
     }
 
+    syncPosition (l: number, t: number) {
+        this.left = l;
+        this.top = t;
+        Atomics.store(this.sharedViews.left, 0, PixelsToFrames(this.left, ZoomHandler.level));
+        //audio does not need to know about top
+    }
 
 }
+

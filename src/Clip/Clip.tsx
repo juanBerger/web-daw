@@ -2,7 +2,7 @@
 import { useState, useRef, MouseEvent } from 'react';
 import { MouseHandler } from '../Core/MouseHandler';
 import { ClipConstructor } from '../Core/ClipConstructor';
-import { FramesToPixels } from '../Core/Utils';
+import { FramesToPixels, PixelsToFrames } from '../Core/Utils';
 
 import './Clip.css'
 
@@ -32,7 +32,10 @@ export default function Clip(props: {cc: ClipConstructor}) {
         
         setLeft(String(l) + 'px');
         setTop(String(t) + 'px');
-        //update shared memory 
+
+        //convert pixels to frames
+
+        props.cc.syncPosition(l, t);
         
     }
 

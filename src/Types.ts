@@ -1,16 +1,4 @@
 
-// export interface ClipConstructor {
-    
-//     clipId: number,
-//     assetId: number,
-//     left: number,
-//     top: number,
-//     leftTrim: number,
-//     rightTrim: number,
-//     volume: number,
-//     mute: number,
-// }
-
 export interface ClipMemory {
     [key: number] : Uint8Array
 }

@@ -56,13 +56,12 @@ class AWP extends AudioWorkletProcessor {
                 views: this._getAudioViews(am)
             };
             
-            console.log(this.assetMemory);
-            
         }
 
         else if (e.data.clipMemory){
             const cm = e.data.clipMemory;
             this.clipMemory[cm.clipId] = cm.data;
+            console.log (this.clipMemory);
         }
 
         else if (e.data.transportMemory){
@@ -79,21 +78,22 @@ class AWP extends AudioWorkletProcessor {
 
         const clips = [];
         for (const key in this.clipMemory){
+
             const clip = this.clipMemory[key]; //this is a Clip object
-            const left = Atomics.load(clip, 8);
-            const mute = Atomics.load(clip, 28);
+            const left = Atomics.load(clip.left, 0);
+            const mute = Atomics.load(clip.mute, 0);
 
             //is left between (tc @ idx = 0) and (tc @ idx = end of block
             //is muted false
             if (left <= (tl_Frame + processLength) && mute !== 1){ 
                 
                 clips.push({
-                    assetId: Atomics.load(clip, 4),
+                    assetId: Atomics.load(clip.assetId, 0),
                     left: left,
-                    length: Atomics.load(clip, 12),
-                    leftTrim: Atomics.load(clip, 16),
-                    rightTrim: Atomics.load(clip, 20),
-                    volume: Atomics.load(clip, 24),
+                    length: Atomics.load(clip.length, 0),
+                    leftTrim: Atomics.load(clip.leftTrim, 0),
+                    rightTrim: Atomics.load(clip.rightTrim, 0),
+                    volume: Atomics.load(clip.volume, 0),
                 })
             }
         }
@@ -111,7 +111,7 @@ class AWP extends AudioWorkletProcessor {
         switch (asset.dtype){
             
             case 16:
-                srcElemView = new Int16Array(asset.data, asset.start, asset.byteLength);
+                srcElemView = new Int16Array(asset.data, asset.start);
                 typeDiv = 32767;
                 break;
         }
@@ -119,12 +119,13 @@ class AWP extends AudioWorkletProcessor {
         for (let ch = 0; ch < asset.channels; ch++){
             result.push(new Float32Array(srcElemView.length / asset.channels));
         }
-
+        
+        let j = 0;
         for (let i = 0; i < srcElemView.length; i += asset.channels){
             for (let ch = 0; ch < asset.channels; ch++){
-                result[ch][i] = srcElemView[i + ch] / typeDiv;
+                result[ch][j] = srcElemView[i + ch] / typeDiv;
             }
-
+            j++
         }
 
         return result;
@@ -144,23 +145,6 @@ class AWP extends AudioWorkletProcessor {
 
     }
 
-
-/**
- * t (timeline)
- * 3000     4000    5000
- * 
- * |        |       |
- *    
- *    |t 3200
- *    |c 200
- * 
- * 
- * 
- * 
- */
-
-
-
     //called @3ms 1000 / (sr / processLength)
     process(inputList, outputList, parameters){
 
@@ -169,7 +153,6 @@ class AWP extends AudioWorkletProcessor {
             Transport.toggle(1);
 
             const outputDevice = outputList[0];
-            const outputDevice_two = outputList[1];
             const processLength = outputDevice[0].length;
 
             //returns clip info for those that fall within this block
@@ -183,36 +166,36 @@ class AWP extends AudioWorkletProcessor {
                 if (!asset)
                     continue
                 
-                const clipEnd = clip.left + clip.length;
-                const tl_procEnd = tl_Idx + processLength;
+                const tl_clipEnd = clip.left + clip.length; //tl address for the end of this clip (hard coded length of cli)
+                const tl_procEnd = tl_Idx + processLength; //tl address for the end of this block
 
-                const srcStart = Math.max(0, (tl_Idx - clip.left + clip.leftTrim));
-                //const srcEnd = 
+                //Each block we increment our index into the source array. 
+                //To do this we calculate the difference between the current tl address and the clip start address. 
+                //A negative value means this clip starts in this block, so we start at zero (plus trim).
+                const srcStart = Math.max(0, (tl_Idx - clip.left)) + clip.leftTrim; 
+                
+                //If the end of the tl address extends beyond this block, we fill up to the end of the block.
+                //Otherwise calculate the remaining length of the clip and add to clipStart
+                const srcEnd = tl_clipEnd > tl_procEnd ? srcStart + processLength : srcStart + (tl_clipEnd - tl_Idx);
 
+                //We write to the beginning of this block if the clip started before this block
+                const outStart = Math.max(0, (clip.left - tl_Idx)); 
 
-                const outStart = Math.max(0, (clip.left - tl_Idx)); //if this num is positive, the clip starts somewhere in this block. Otherwise, we are continuing
-                const outEnd = clipEnd > tl_procEnd ? processLength : tl_procEnd - clipEnd;
-            
-            
-                for (let ch = 0; ch < asset.views.length; ch++){
-                    for (let i = 0; i < outputDevice[ch].length; i++){
-                        outputDevice[ch][i] = asset.views[ch][i];
-                        outputDevice_two[ch][i] = asset.views[ch][i];
+                //We dont need this because the read and write lengths are the same
+                //const outEnd = tl_clipEnd > tl_procEnd ? processLength : tl_procEnd - tl_clipEnd;
+                
+                
+                for (let ch = 0; ch < asset.asset.channels; ch++){
+                    const chView = asset.views[ch].subarray(srcStart, srcEnd);
+                    for (let i = 0; i < chView.length; i++){
+                        outputDevice[ch][outStart + i] += chView[i];
                     }
-                }
+                }   
 
-
-                // for (const view of asset.views){
-                //     //const subView = asset.views[ch].subarray(sliceStart, sliceEnd);
-                //     for (let i = 0; i < subView.length; i++){
-                //         outputDevice[ch][i] += subView[i]
-                //     }
-                // }
-            
             }
 
-            console.log(this._getRMS(output[0]))
-            Transport.tick(output.length);
+            //console.log(this._getRMS(outputDevice[0]) + this._getRMS(outputDevice[1]));
+            Transport.tick(processLength);
         }
 
         //toggle off if we have just been playing
@@ -277,48 +260,3 @@ class Transport {
     }
 
 }
-
-
- 
-            
-
-//i = render Idx
-// for (let frame = 0; frame < processLength; frame++){
-
-//     const tl_Idx = Transport.tl_Frame + frame; //what is the timeline value of this frame in the process block
-//     const remain = processLength - frame;
-
-    // for (const clip of clips){
-
-    //     //frame = 100 -- we could only let === through
-    //     if (clip.left > tl_Idx)
-    //         continue
-
-    //     const asset = this.assetMemory[clip.assetId]; //get the actual audio data
-    //     if (!asset)
-    //         continue
-
-    //     const sliceStart = clip.leftTrim;
-    //     let sliceEnd = clip.leftTrim + remain;
-        
-    //     //Disable until we fix length
-    //     // if (sliceStart + length < sliceEnd)
-    //     //     sliceEnd = sliceStart + length;
-
-    //     for (const ch in asset.views){
-    //         const subView = asset.views[ch].subArray(sliceStart, sliceEnd);
-    //         for (let i = 0; i < sliceStart - sliceEnd; i++){
-    //             outputDevice[ch][frame + i] += subView[i]
-    //         }
-    //     }
-    
-    // }
-
-//}
-
-// const output = outputList[0];
-// output.forEach((channel) => {
-// for (let i = 0; i < channel.length; i++) {
-//     channel[i] = Math.random() * 2 - 1;
-// }
-// });

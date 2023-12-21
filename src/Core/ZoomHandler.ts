@@ -1,5 +1,5 @@
 export class ZoomHandler {
 
-    static level: number = 0;
+    static level: string = "5";
 
 }
