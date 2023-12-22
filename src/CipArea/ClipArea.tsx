@@ -34,12 +34,15 @@ export default function ClipArea(){
 
 
     return (
-        <div id='ca-parent'>
-            {/* <div id='test-one'></div> */}
-            {clipConstructors.map(cc => 
-                <Clip key={cc.clipId} cc={cc}/>
-            )}
-        </div>
+        <>
+            
+            <div id='ca-parent'>
+                {/* <div id='test-one'></div> */}
+                {clipConstructors.map(cc => 
+                    <Clip key={cc.clipId} cc={cc}/>
+                )}
+            </div>
+        </>
     )
 
 }

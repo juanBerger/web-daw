@@ -182,9 +182,8 @@ class AWP extends AudioWorkletProcessor {
                 const outStart = Math.max(0, (clip.left - tl_Idx)); 
 
                 //We dont need this because the read and write lengths are the same
-                //const outEnd = tl_clipEnd > tl_procEnd ? processLength : tl_procEnd - tl_clipEnd;
-                
-                
+                //const outEnd = outStart + (srcEnd - srcStart);
+
                 for (let ch = 0; ch < asset.asset.channels; ch++){
                     const chView = asset.views[ch].subarray(srcStart, srcEnd);
                     for (let i = 0; i < chView.length; i++){

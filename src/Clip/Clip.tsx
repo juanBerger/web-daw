@@ -14,6 +14,8 @@ export default function Clip(props: {cc: ClipConstructor}) {
     const clipRef = useRef<HTMLDivElement>(null);
 
     const handleMouseLeave = (e: MouseEvent) => {
+
+        
         
     }
 
@@ -32,16 +34,13 @@ export default function Clip(props: {cc: ClipConstructor}) {
         
         setLeft(String(l) + 'px');
         setTop(String(t) + 'px');
-
-        //convert pixels to frames
-
         props.cc.syncPosition(l, t);
         
     }
 
 
     const handleMouseMove = (e: MouseEvent) => {
-        
+        //Not used?
     }
 
     return (

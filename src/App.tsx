@@ -1,5 +1,8 @@
 
 import { useState } from "react"
+import { Canvas } from '@react-three/fiber'
+
+
 import ClipArea from "./CipArea/ClipArea"
 
 import { AudioGraph } from './Core/AudioGraph';
@@ -30,6 +33,7 @@ export default function App(){
         <>
             {showStart && <button id='startButton' onClick={handleOnClick}>Start</button>}
             {!showStart && <ClipArea/>} 
+            
         </>
     )
 
