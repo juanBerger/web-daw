@@ -15,7 +15,7 @@ const TEST_FILES = [
     // 'SCOR_SCORE_0218_02701_Roll_Out_The_Bank__a__30_STEM_(VERSE)_APM.wav'
 ]
 
-export default function ClipArea(){
+export function ClipArea(){
 
     const [clipConstructors, setClipConstructors] = useState<ClipConstructor[]>([]);
 
