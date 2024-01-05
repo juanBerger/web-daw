@@ -13,8 +13,6 @@ import { ZoomHandler } from "../Core/ZoomHandler";
  * https://github.com/pmndrs/react-three-fiber/issues/1892
  */
 
-
-
 export function Playhead() {
 
     //Get Ratios For Converting between three.js space and pixel space
