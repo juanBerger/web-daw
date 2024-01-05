@@ -2,7 +2,7 @@
 import { AudioData } from '../Types';
 import { AudioGraph } from './AudioGraph';
 import { ClipConstructor } from './ClipConstructor';
-import { RandomInt32, BytesToFrames, RandomUInt8 } from './Utils'
+import { BytesToFrames, RandomUInt8 } from './Utils'
 
 export class FileOpener{
 

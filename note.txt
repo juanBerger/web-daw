@@ -1,0 +1,8 @@
+
+frames to pixels
+pixels to UI units
+
+need the fpp that would satisfy fitting x length frames into y pixels.
+Math.ceil(x / y) = fpp
+
+

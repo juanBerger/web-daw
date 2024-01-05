@@ -2,13 +2,30 @@
 import { useState } from "react"
 
 import { Canvas } from '@react-three/fiber'
+import { useFrame } from "@react-three/fiber";
 import { Playhead } from "./Canvas/Playhead";
 
 import { ClipArea } from "./CipArea/ClipArea"
 import { AudioGraph } from './Core/AudioGraph';
-import { UIListener } from "./Core/UIListener";
+import { TCMemory } from "./Core/TCMemory";
 import { MouseHandler } from "./Core/MouseHandler";
 
+
+
+/**
+ * useFrame is called before r3f's next frame render. 
+ * this is basically the same as requestAnimation frame. It's ok call useFrame inside of many components
+ */
+function TCListener(){
+
+    useFrame(() => {
+        TCMemory.sync();
+    })
+
+    return <></>
+}
+
+//z position of 400 makes the unit 1 roughly about 1 px
 export default function App(){
 
     const [showStart, setShowStart] = useState<boolean>(true);
@@ -21,8 +38,7 @@ export default function App(){
             await AudioGraph.init();
             await AudioGraph.audioContext.resume();
             
-            
-            UIListener.init(AudioGraph.awp); //set up render loop (listens for changes that originate in the audio process)
+            TCMemory.init(AudioGraph.awp); //set up render loop (listens for changes that originate in the audio process)
             MouseHandler.init();
 
             setShowStart(!showStart);
@@ -30,9 +46,9 @@ export default function App(){
     }
 
     return (
+        
         <>
             {showStart && <button id='startButton' onClick={handleOnClick}>Start</button>}
-            {!showStart && <ClipArea/>}
             {!showStart && <div id='canvasRoot' style={{
                 position: 'absolute',
                 top: '0px',
@@ -40,15 +56,15 @@ export default function App(){
                 height: '100%',
                 width: '100%'
             }}>
-                <Canvas>
-                    <ambientLight intensity={0.1} />
-                    <directionalLight color="red" position={[0, 0, 5]} />
+                <Canvas camera={{position: [0,0, 5]}}> 
+                    <ambientLight intensity={0.6} />
+                    <directionalLight intensity={0.6} position={[0, 0, 5]} />
                     <Playhead/>
+                    <TCListener/>
                 </Canvas>
-            </div>}          
+            </div>}  
+            {!showStart && <ClipArea/>}        
         </>
     )
-
-
 
 }

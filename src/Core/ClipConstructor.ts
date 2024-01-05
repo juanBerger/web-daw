@@ -1,9 +1,9 @@
 import { AudioGraph } from "./AudioGraph";
-import { PixelsToFrames } from "./Utils";
 import { ZoomHandler } from "./ZoomHandler";
 
 export class ClipConstructor {
 
+    audioGraph: AudioGraph
     clipId: number //random Int32
     assetId: number //random Int32
     left: number //frames
@@ -25,7 +25,7 @@ export class ClipConstructor {
         volume: new Int32Array(this.data.slice(24, 28)),
         mute: new Uint8Array(this.data.slice(28, 29))
     }
-    audioGraph: AudioGraph
+    
 
     constructor(_audioGraph: AudioGraph, _clipId: number, _assetId: number, 
                 _left: number, _top: number, _length: number,
@@ -43,7 +43,6 @@ export class ClipConstructor {
         this.volume = _volume;
         this.mute = _mute
 
-        console.log(this.sharedViews);
         this._syncSharedMemory();
         AudioGraph.awp?.port.postMessage({clipMemory: {clipId: this.clipId, data: this.sharedViews}})
         
@@ -77,11 +76,16 @@ export class ClipConstructor {
 
     }
 
+    /**
+     * @abstract updates the shared memory block that holds the position of this clip
+     * @param l  num pixels from left boundry
+     * @param t num pixels from top boundry (unused, audio does not need to know about top)
+     */
+
     syncPosition (l: number, t: number) {
         this.left = l;
         this.top = t;
-        Atomics.store(this.sharedViews.left, 0, PixelsToFrames(this.left, ZoomHandler.level));
-        //audio does not need to know about top
+        Atomics.store(this.sharedViews.left, 0, ZoomHandler.PixelsToFrames(this.left));
     }
 
 }

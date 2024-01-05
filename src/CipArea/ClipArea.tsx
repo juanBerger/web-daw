@@ -22,10 +22,7 @@ export function ClipArea(){
     useEffect(() => {
         
         (async () => {
-
-            //read saved sessions here
-
-            const ccs = await FileOpener.OpenAndGenerateClips(TEST_FILES);             
+            const ccs = await FileOpener.OpenAndGenerateClips(TEST_FILES);
             setClipConstructors(ccs);
 
         })();
@@ -34,10 +31,8 @@ export function ClipArea(){
 
 
     return (
-        <>
-            
+        <>            
             <div id='ca-parent'>
-                {/* <div id='test-one'></div> */}
                 {clipConstructors.map(cc => 
                     <Clip key={cc.clipId} cc={cc}/>
                 )}

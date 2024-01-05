@@ -1,21 +1,28 @@
 
-import { useState, useRef, MouseEvent } from 'react';
+import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { MouseHandler } from '../Core/MouseHandler';
 import { ClipConstructor } from '../Core/ClipConstructor';
-import { FramesToPixels, PixelsToFrames } from '../Core/Utils';
+import { ZoomHandler } from '../Core/ZoomHandler';
+import { StateManager } from '../Core/StateManager';
 
 import './Clip.css'
-
 
 export default function Clip(props: {cc: ClipConstructor}) {
 
     const [left, setLeft] = useState(String(props.cc.left) + 'px');
     const [top, setTop] = useState(String(props.cc.top) + 'px');
+    const [length, setLength] = useState(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
     const clipRef = useRef<HTMLDivElement>(null);
 
-    const handleMouseLeave = (e: MouseEvent) => {
+    useEffect(() => {
+        StateManager.zoomLevelCallbacks.push(handleZoomChange);
+    }, []);
 
-        
+    const handleZoomChange = () => {
+        setLength(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
+    }
+
+    const handleMouseLeave = (e: MouseEvent) => {
         
     }
 
@@ -29,6 +36,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
             MouseHandler.registerComponent({ref: updatePosition, offsets: {l: lOffset, t: tOffset}});
         }
     }
+    
 
     const updatePosition = (l: number, t: number) : void => {
         
@@ -46,7 +54,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
     return (
         <div ref={clipRef} className='c-parent' 
             id={String(props.cc.clipId)} 
-            style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: String(FramesToPixels(props.cc.length, 'full-length')) + 'px'}}
+            style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: length}}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseMove={handleMouseMove}>

@@ -1,6 +1,8 @@
 
 import { PosCallback } from "../Types";
+import { ZoomHandler } from "./ZoomHandler";
 
+//this is going to be a generic key + mouse Handler class
 export class MouseHandler {
 
     static clientX: number = 0;
@@ -8,18 +10,38 @@ export class MouseHandler {
     static leftDown: boolean = false;
     static posCallbacks: PosCallback[] = [];
  
-
     static init(){
 
         window.addEventListener('mousedown', e => {MouseHandler._handle(e)});
         window.addEventListener('mouseup', e => {MouseHandler._handle(e)});
         window.addEventListener('mousemove', e => {MouseHandler._handle(e)});
+        window.addEventListener('keydown', e => {MouseHandler._handleKeyDown(e)});
 
     }
 
     static registerComponent(callback: PosCallback) {
         MouseHandler.posCallbacks.push(callback);
     }
+
+
+    protected static _handleKeyDown(e: KeyboardEvent){
+
+        switch (e.key){
+
+            case '=':
+                ZoomHandler.down(); //smaller number means lower fpp which means longer length
+                break;
+            
+            case '-':
+                ZoomHandler.up();
+                break;
+
+            //move spacebar listener to here as well
+
+        }
+
+    }
+
 
     protected static _handle(e: MouseEvent){
         
