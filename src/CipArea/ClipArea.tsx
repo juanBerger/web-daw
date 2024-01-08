@@ -30,6 +30,9 @@ export function ClipArea(){
     }, [])
 
 
+    //[...clipConstructors, newClip]
+
+
     return (
         <>            
             <div id='ca-parent'>

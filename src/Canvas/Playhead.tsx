@@ -28,7 +28,7 @@ export function Playhead() {
     const playHead = useRef<Mesh>(null!);    
     
     useFrame(() => {
-
+        //const tc = TCMemory.sync();0
         const pxPos = ZoomHandler.FramesToPixels(TCMemory.tc);
         const canvasPos = ScalePxToCanvas(pxPos, size.width, W_UNIT_RATIO);
         playHead.current.position.x = canvasPos;    

@@ -22,9 +22,9 @@ export default function Clip(props: {cc: ClipConstructor}) {
         setLength(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
     }
 
-    const handleMouseLeave = (e: MouseEvent) => {
-        
-    }
+    // const handleMouseLeave = (e: MouseEvent) => {
+    //     
+    // }
 
     const handleMouseDown = (e: MouseEvent) => {
         
@@ -47,17 +47,18 @@ export default function Clip(props: {cc: ClipConstructor}) {
     }
 
 
-    const handleMouseMove = (e: MouseEvent) => {
-        //Not used?
-    }
+    // const handleMouseMove = (e: MouseEvent) => {
+    //     //Not used?
+    // }
 
     return (
         <div ref={clipRef} className='c-parent' 
             id={String(props.cc.clipId)} 
             style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: length}}
             onMouseDown={handleMouseDown}
-            onMouseLeave={handleMouseLeave}
-            onMouseMove={handleMouseMove}>
+            // onMouseLeave={handleMouseLeave}
+            // onMouseMove={handleMouseMove}
+            >
             <p>I'm a clip</p>
         </div>
     )

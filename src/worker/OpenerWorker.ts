@@ -1,7 +1,7 @@
 
 import { AudioData } from "../Types";
 import { v5 as uuidv5 } from 'uuid'
-import { RandomInt32, RandomUInt8 } from "../Core/Utils";
+import { RandomUInt8 } from "../Core/Utils";
 
 onmessage = async e => {
 
@@ -27,7 +27,7 @@ class Parser {
         try {
             
             const bytes = await this._getBytes(path);
-            const type = this._getType(bytes);
+            const type = this._getType(); //stand in
             //const assetId = this._getAssetId(path);
             const assetId = RandomUInt8();
 
@@ -69,8 +69,8 @@ class Parser {
         })
     }
 
-    protected _getType (bytes: ArrayBuffer) : string{
-        bytes = new ArrayBuffer(0);
+    protected _getType () : string{
+        //bytes = new ArrayBuffer(0);
         return 'wav'
     }
 

@@ -19,6 +19,7 @@ export class TCMemory {
         const newTc = Atomics.load(TCMemory.tcMemory, 0);
         if (newTc !== TCMemory.tc)
             TCMemory.tc = newTc; //this has to be a copy op
+     
         
     }
 
