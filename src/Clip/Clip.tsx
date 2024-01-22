@@ -16,15 +16,12 @@ export default function Clip(props: {cc: ClipConstructor}) {
 
     useEffect(() => {
         StateManager.zoomLevelCallbacks.push(handleZoomChange);
+        props.cc.setDomRef(clipRef);
     }, []);
 
     const handleZoomChange = () => {
         setLength(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
     }
-
-    // const handleMouseLeave = (e: MouseEvent) => {
-    //     
-    // }
 
     const handleMouseDown = (e: MouseEvent) => {
         
@@ -36,7 +33,6 @@ export default function Clip(props: {cc: ClipConstructor}) {
             MouseHandler.registerComponent({ref: updatePosition, offsets: {l: lOffset, t: tOffset}});
         }
     }
-    
 
     const updatePosition = (l: number, t: number) : void => {
         
@@ -46,11 +42,6 @@ export default function Clip(props: {cc: ClipConstructor}) {
         
     }
 
-
-    // const handleMouseMove = (e: MouseEvent) => {
-    //     //Not used?
-    // }
-
     return (
         <div ref={clipRef} className='c-parent' 
             id={String(props.cc.clipId)} 
@@ -59,7 +50,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
             // onMouseLeave={handleMouseLeave}
             // onMouseMove={handleMouseMove}
             >
-            <p>I'm a clip</p>
+            {/* <p>I'm a clip</p> */}
         </div>
     )
 

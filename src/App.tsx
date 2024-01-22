@@ -4,11 +4,14 @@ import { useState } from "react"
 import { Canvas } from '@react-three/fiber'
 import { useFrame } from "@react-three/fiber";
 import { Playhead } from "./Canvas/Playhead";
+import { Waveform } from "./Canvas/Waveform"
 
 import { ClipArea } from "./CipArea/ClipArea"
 import { AudioGraph } from './Core/AudioGraph';
 import { TCMemory } from "./Core/TCMemory";
 import { MouseHandler } from "./Core/MouseHandler";
+import { ClipConstructor } from "./Core/ClipConstructor";
+
 
 
 
@@ -25,26 +28,31 @@ function TCListener(){
     return <></>
 }
 
-//z position of 400 makes the unit 1 roughly about 1 px
 export default function App(){
 
     const [showStart, setShowStart] = useState<boolean>(true);
+    const [waveforms, setWaveforms] = useState<ClipConstructor[]>([]);
 
     const handleOnClick = async () => {    
-        
         if(showStart){
             
             //set up audio process
             await AudioGraph.init();
             await AudioGraph.audioContext.resume();
             
-            TCMemory.init(AudioGraph.awp); //set up render loop (listens for changes that originate in the audio process)
+            TCMemory.init(AudioGraph.awp);
             MouseHandler.init();
 
             setShowStart(!showStart);
         }        
     }
 
+    const canvasBridge = (ccs: ClipConstructor[]) => {
+        setWaveforms(ccs);
+    }
+
+    
+ 
     return (
         
         <>
@@ -61,9 +69,11 @@ export default function App(){
                     <directionalLight intensity={0.6} position={[0, 0, 5]} />
                     <Playhead/>
                     <TCListener/>
+                    {waveforms?.map(cc => <Waveform key={cc.clipId} cc={cc}/>)}
                 </Canvas>
             </div>}  
-            {!showStart && <ClipArea/>}        
+            
+            {!showStart && <ClipArea canvasBridge={canvasBridge}/>}        
         </>
     )
 

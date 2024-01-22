@@ -20,7 +20,13 @@ export function BytesToFrames(ad: AudioData) : number {
 }
 
 
-
+/**
+ * 
+ * @param pxNum - pixel value to convert to three js space
+ * @param pxWidth - the width of our browser viewport in pixels
+ * @param w_unit_ratio - width of three js space divided by pixel width
+ * @returns 
+ */
 export function ScalePxToCanvas(pxNum: number, pxWidth: number, w_unit_ratio: number) : number{
     
     const scale = (number: number, inMin: number, inMax: number, outMin: number, outMax: number) => {

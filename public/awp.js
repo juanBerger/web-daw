@@ -71,6 +71,36 @@ class AWP extends AudioWorkletProcessor {
             Transport.tcMemory = e.data.tcMemory;
         }
 
+        /**
+         * {getWaveform: {assetId: assetId, msgId: msgId, p_clipLength: p_clipLength}}
+         */
+        else if (e.data.getWaveform){
+            
+            const assetId = e.data.getWaveform.assetId;
+            const msgId = e.data.getWaveform.msgId;
+            const p_clipLength = e.data.getWaveform.p_clipLength;
+            const wfBuffer = this._getWaveform(assetId, p_clipLength);
+            this.port.postMessage({gotWaveform: {assetId: assetId, msgId: msgId, payload: wfBuffer}}, [wfBuffer]);
+            
+        }
+
+    }
+
+
+
+    _getWaveform(assetId, p_clipLength){
+
+        const left = this.assetMemory[assetId].views[0];
+        //const maxStride = left.length / p_clipLength;
+        //const maxStride = Math.floor(sampleRate / strideFactor); //this ends up being about 200 pts per second for typical srs      
+        const stride = left.length / p_clipLength;
+        const waveForm = new Float32Array(Math.floor(p_clipLength));
+        
+        for (let i = 0, j = 0; i < left.length; i += stride, j++){
+            waveForm[j] = left[i];
+        }
+
+        return waveForm.buffer;
     }
     
     _getClips(tl_Frame, processLength) {
@@ -100,7 +130,11 @@ class AWP extends AudioWorkletProcessor {
         return clips
     }
 
-    //Assumes ints for now,
+    /**
+     * 
+     * @param {*} asset 
+     * @returns planar representation of the audio daa
+     */
     _getAudioViews (asset){
 
         let result = [];

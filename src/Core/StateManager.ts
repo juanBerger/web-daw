@@ -1,14 +1,6 @@
 
-/**
- * This is what redux will be?
- * 
- * 
- */
-
 export class StateManager {
 
-    //static clipConstructors: ClipConstructor[] = [];
-    //static renderClipArea: (ccs: ClipConstructor[]) => void;
     static zoomLevelCallbacks: (() => void)[] = [];
 
     static emitEvent(type: string) : void {
@@ -21,9 +13,8 @@ export class StateManager {
                 break;
 
         }
-
-
     }
+
 
 
 }   

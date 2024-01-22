@@ -7,13 +7,12 @@ import { BytesToFrames, RandomUInt8 } from './Utils'
 export class FileOpener{
 
     protected static WORKER_PATH = '../worker/OpenerWorker.ts';
-    protected static BUILD_PATH_PREFIX = '../assets/';
+    protected static BUILD_PATH_PREFIX = '../assets/' // ../assets/
 
     /**
      * @param paths : Array of file paths
      * @description : Parses files, passes audio data to awp
      */
-
     public static async Open(paths: string[]) : Promise<ClipConstructor[] | void> {
         await FileOpener._parse(paths);
     }
@@ -24,15 +23,22 @@ export class FileOpener{
      * @description : Parses files, passes audio data to awp and generates clips from them with default values
      */
     public static async OpenAndGenerateClips(paths: string[]) : Promise<ClipConstructor[]> {
+        
         let defaultTop = -20; //in pixels, a hack for now
         const ads = await FileOpener._parse(paths);
-        return ads.map(ad => 
-            new ClipConstructor(AudioGraph, RandomUInt8(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad)))
+        const ccs: ClipConstructor[] = [];
+
+        for await (const ad of ads){
+            const cc = new ClipConstructor(AudioGraph, RandomUInt8(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad));
+            //await cc.getWaveform();
+            ccs.push(cc);
+        }
+
+        return ccs
     }
 
 
     /**
-     * 
      * @param paths : An array of file paths,
      * @returns : An array of promises which resolve to an AudioData instance
      */
@@ -43,8 +49,8 @@ export class FileOpener{
             
             return new Promise((resolve, reject) => {
                 
-                const w = new Worker(new URL(FileOpener.WORKER_PATH, import.meta.url), {type: 'module'})
-                w.postMessage({path: path})
+                const w = new Worker(new URL(FileOpener.WORKER_PATH, import.meta.url), {type: 'module'});
+                w.postMessage({path: path});
                 w.onmessage = e => {
             
                     if (e.data.result === 'ok'){
@@ -54,7 +60,7 @@ export class FileOpener{
                     }
                     
                     else if (e.data.result === 'error'){
-                        console.error(e.data.reason)
+                        console.error(e.data.reason);
                         reject(e.data.reason);
                     }
 

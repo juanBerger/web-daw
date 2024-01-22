@@ -9,11 +9,17 @@ export class ClipConstructor {
     left: number //frames
     top: number //pixels
     length: number //frames
+    domRef: any //html element ref
+
+    waveform: ArrayBuffer = new ArrayBuffer(1)
+    data: SharedArrayBuffer = new SharedArrayBuffer(29)
+
+
     leftTrim?: number = 0 //frames
     rightTrim?: number = 0 //frames
     volume?: number = 1 //db
     mute?: number = 0
-    data: SharedArrayBuffer = new SharedArrayBuffer(29)
+    
     sharedViews: any = {
 
         clipId: new Int32Array(this.data.slice(0, 4)),
@@ -45,13 +51,13 @@ export class ClipConstructor {
 
         this._syncSharedMemory();
         AudioGraph.awp?.port.postMessage({clipMemory: {clipId: this.clipId, data: this.sharedViews}})
-        
+      
     }
 
     /**
      * 
      * @param cc : Tells us what values to write
-     * @param view : View to memeory block to write to
+     * @param view : View to memory block to write to
      * @deecription :: Byte Structure is ::
      * 
      * | clipdId (4 bytes) | assetId (4 bytes) | left (4 bytes) | length (4 bytes) |
@@ -76,9 +82,13 @@ export class ClipConstructor {
 
     }
 
+    setDomRef(domRef: any){
+        this.domRef = domRef;
+    }
+
     /**
      * @abstract updates the shared memory block that holds the position of this clip
-     * @param l  num pixels from left boundry
+     * @param l num pixels from left boundry
      * @param t num pixels from top boundry (unused, audio does not need to know about top)
      */
 
@@ -87,6 +97,12 @@ export class ClipConstructor {
         this.top = t;
         Atomics.store(this.sharedViews.left, 0, ZoomHandler.PixelsToFrames(this.left));
     }
+
+    async getWaveform() : Promise<any> {
+        this.waveform = await AudioGraph.getWaveform(this.assetId, ZoomHandler.FramesToPixels(this.length));
+        return this.waveform;
+    }
+
 
 }
 

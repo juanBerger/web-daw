@@ -1,4 +1,3 @@
-
 export interface ClipMemory {
     [key: number] : Uint8Array
 }
@@ -14,7 +13,7 @@ export interface AudioData {
     dtype: number,
     start: number,
     end: number,
-    data: ArrayBuffer
+    data: ArrayBuffer,
 
 }
 
@@ -22,5 +21,4 @@ export interface PosCallback {
     ref: any,
     offsets: {l: number, t: number}
 }
-
 

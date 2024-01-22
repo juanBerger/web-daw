@@ -1,8 +1,14 @@
+/**
+ * 
+ * This should be renamed to be a generic mouse and keyboard handler class
+ * 
+ * 
+ */
+
 
 import { PosCallback } from "../Types";
 import { ZoomHandler } from "./ZoomHandler";
 
-//this is going to be a generic key + mouse Handler class
 export class MouseHandler {
 
     static clientX: number = 0;

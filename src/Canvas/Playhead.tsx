@@ -31,6 +31,8 @@ export function Playhead() {
         //const tc = TCMemory.sync();0
         const pxPos = ZoomHandler.FramesToPixels(TCMemory.tc);
         const canvasPos = ScalePxToCanvas(pxPos, size.width, W_UNIT_RATIO);
+       
+        
         playHead.current.position.x = canvasPos;    
     })
 
