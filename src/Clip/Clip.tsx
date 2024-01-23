@@ -11,7 +11,7 @@ import './Clip.css'
 export default function Clip(props: {cc: ClipConstructor}) {
 
     const [left, setLeft] = useState(String(props.cc.left) + 'px');
-    //const [top, setTop] = useState(String(props.cc.top) + 'px');
+    const [top, setTop] = useState(String(props.cc.top) + 'px');
     const [path, setPath] = useState<string>('');
     const [length, setLength] = useState(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
     const clipRef = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
     const updatePosition = (l: number, t: number) : void => {
         
         setLeft(String(l) + 'px');
-        //setTop(String(t) + 'px'); -- we are clamping to tracks for now
+        setTop(String(t) + 'px'); 
         props.cc.syncPosition(l, t);
         
     }

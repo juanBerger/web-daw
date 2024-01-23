@@ -32,7 +32,6 @@ export class FileOpener{
 
         for await (const ad of ads){
             const cc = new ClipConstructor(AudioGraph, RandomUInt8(), ad.assetId, 0, defaultTop+=80, BytesToFrames(ad));
-            //await cc.getWaveform();
             ccs.push(cc);
         }
 
@@ -47,14 +46,14 @@ export class FileOpener{
     protected static async _parse(paths: string[]) : Promise<AudioData[]> {
 
         !DEV ? FileOpener.BUILD_PATH_PREFIX = 'https://berger-web-daw.s3.us-east-2.amazonaws.com/' : FileOpener.BUILD_PATH_PREFIX = '../assets/';
-        !DEV ? FileOpener.WORKER_PATH = './OpenerWorker.ts' : FileOpener.WORKER_PATH = '../worker/OpenerWorker.ts';
+        //!DEV ? FileOpener.WORKER_PATH = './OpenerWorker.ts' : FileOpener.WORKER_PATH = '../worker/OpenerWorker.ts';
 
         const prefixed = paths.map(path => FileOpener.BUILD_PATH_PREFIX + path)
         const promises = prefixed.map(path => {
             
             return new Promise((resolve, reject) => {
                 
-                const w = new Worker(new URL(FileOpener.WORKER_PATH, import.meta.url), {type: 'module'});
+                const w = new Worker(new URL('./OpenerWorker.ts', import.meta.url), {type: 'module'});
                 w.postMessage({path: path});
                 w.onmessage = e => {
             

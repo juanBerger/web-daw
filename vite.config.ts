@@ -9,5 +9,8 @@ export default defineConfig({
           "Cross-Origin-Opener-Policy": "same-origin",
         },
     },
-    plugins: [react()],
+    plugins: [
+      react()
+      
+    ],
 })
