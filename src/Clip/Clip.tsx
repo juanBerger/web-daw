@@ -11,7 +11,7 @@ import './Clip.css'
 export default function Clip(props: {cc: ClipConstructor}) {
 
     const [left, setLeft] = useState(String(props.cc.left) + 'px');
-    const [top, setTop] = useState(String(props.cc.top) + 'px');
+    //const [top, setTop] = useState(String(props.cc.top) + 'px');
     const [path, setPath] = useState<string>('');
     const [length, setLength] = useState(String(ZoomHandler.FramesToPixels(props.cc.length)) + 'px');
     const clipRef = useRef<HTMLDivElement>(null);
