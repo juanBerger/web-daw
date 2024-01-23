@@ -47,8 +47,7 @@ export class FileOpener{
     protected static async _parse(paths: string[]) : Promise<AudioData[]> {
 
         !DEV ? FileOpener.BUILD_PATH_PREFIX = 'https://berger-web-daw.s3.us-east-2.amazonaws.com/' : FileOpener.BUILD_PATH_PREFIX = '../assets/';
-        !DEV ? FileOpener.WORKER_PATH = 'OpenerWorker.ts' : FileOpener.WORKER_PATH = '../worker/OpenerWorker.ts';
-
+        !DEV ? FileOpener.WORKER_PATH = './OpenerWorker.ts' : FileOpener.WORKER_PATH = '../worker/OpenerWorker.ts';
 
         const prefixed = paths.map(path => FileOpener.BUILD_PATH_PREFIX + path)
         const promises = prefixed.map(path => {
