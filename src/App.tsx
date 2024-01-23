@@ -11,9 +11,7 @@ import { AudioGraph } from './Core/AudioGraph';
 import { TCMemory } from "./Core/TCMemory";
 import { MouseHandler } from "./Core/MouseHandler";
 import { ClipConstructor } from "./Core/ClipConstructor";
-
-
-
+import './App.css'
 
 /**
  * useFrame is called before r3f's next frame render. 
@@ -57,6 +55,7 @@ export default function App(){
         
         <>
             {showStart && <button id='startButton' onClick={handleOnClick}>Start</button>}
+            
             {!showStart && <div id='canvasRoot' style={{
                 position: 'absolute',
                 top: '0px',

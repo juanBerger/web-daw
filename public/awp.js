@@ -87,14 +87,16 @@ class AWP extends AudioWorkletProcessor {
     }
 
 
-
     _getWaveform(assetId, p_clipLength){
 
         const left = this.assetMemory[assetId].views[0];
-        //const maxStride = left.length / p_clipLength;
-        //const maxStride = Math.floor(sampleRate / strideFactor); //this ends up being about 200 pts per second for typical srs      
+        
         const stride = left.length / p_clipLength;
         const waveForm = new Float32Array(Math.floor(p_clipLength));
+
+
+        // const stride = 2000;
+        // const waveForm = new Float32Array(left.length);
         
         for (let i = 0, j = 0; i < left.length; i += stride, j++){
             waveForm[j] = left[i];

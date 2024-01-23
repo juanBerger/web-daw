@@ -62,7 +62,7 @@ export default function Clip(props: {cc: ClipConstructor}) {
     const updatePosition = (l: number, t: number) : void => {
         
         setLeft(String(l) + 'px');
-        setTop(String(t) + 'px');
+        //setTop(String(t) + 'px'); -- we are clamping to tracks for now
         props.cc.syncPosition(l, t);
         
     }
@@ -72,15 +72,14 @@ export default function Clip(props: {cc: ClipConstructor}) {
             id={String(props.cc.clipId)} 
             style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: length}}
             onMouseDown={handleMouseDown}
-            // onMouseLeave={handleMouseLeave}
-            // onMouseMove={handleMouseMove}
             >
             {/* <p>I'm a clip</p> */}
             <svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
-                <path stroke="white" fill="transparent" d={path}/>
+                <path stroke="rgba(255, 221, 239, 0.8)" fill="transparent" d={path}/>
             </svg>
         </div>
     )
 
 
 }
+//viewBox='0 0 1800 60'

@@ -23,6 +23,7 @@ export function ClipArea(props: {canvasBridge: any}){
     useEffect(() => {
         
         (async () => {
+
             const ccs = await FileOpener.OpenAndGenerateClips(TEST_FILES);
             setClipConstructors(ccs);
             //props.canvasBridge(ccs); 

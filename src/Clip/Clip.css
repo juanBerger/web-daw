@@ -6,16 +6,13 @@
     left: var(--x);
     top: var(--y);
     width: var(--length);
-    border: 1px solid goldenrod;
+    border: 1px solid rgba(200, 195, 183, 0.237);
+    border-radius: 10px;
     height: 60px;
 }
 
 .c-parent:hover{
-    /* background-color: rgb(166, 166, 166); */
+    background-color: rgba(166, 166, 166, 0.178);
     cursor: grab;
     
-}
-
-p{
-    color: red;
 }

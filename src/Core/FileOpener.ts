@@ -4,6 +4,8 @@ import { AudioGraph } from './AudioGraph';
 import { ClipConstructor } from './ClipConstructor';
 import { BytesToFrames, RandomUInt8 } from './Utils'
 
+const DEV = false;
+
 export class FileOpener{
 
     protected static WORKER_PATH = '../worker/OpenerWorker.ts';
@@ -43,6 +45,8 @@ export class FileOpener{
      * @returns : An array of promises which resolve to an AudioData instance
      */
     protected static async _parse(paths: string[]) : Promise<AudioData[]> {
+
+        !DEV ? FileOpener.BUILD_PATH_PREFIX = 'https://berger-web-daw.s3.us-east-2.amazonaws.com/' : FileOpener.BUILD_PATH_PREFIX = '../assets/';
         
         const prefixed = paths.map(path => FileOpener.BUILD_PATH_PREFIX + path)
         const promises = prefixed.map(path => {
