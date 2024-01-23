@@ -45,7 +45,6 @@ export function Waveform(props: {cc: ClipConstructor}){
                 //const c_y = CanvasUtils.PixelToCanvas(p_scaledY, viewport.width, size.width); //this scales pixel range to canvas range
                 pts.push(new Vector2(c_x, c_y));
             }
-
             //const pts = [new Vector2(start, 0), new Vector2(start + 10, 0)];
             setPoints(pts);
         })();
