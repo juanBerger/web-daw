@@ -26,7 +26,7 @@ export class FileOpener{
      */
     public static async OpenAndGenerateClips(paths: string[]) : Promise<ClipConstructor[]> {
         
-        let defaultTop = -20; //in pixels, a hack for now
+        let defaultTop = 0; //in pixels, a hack for now
         const ads = await FileOpener._parse(paths);
         const ccs: ClipConstructor[] = [];
 

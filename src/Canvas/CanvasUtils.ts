@@ -8,8 +8,8 @@ export class CanvasUtils {
     /**
      * 
      * @param pixel - number to convert to canvas space
-     * @param canvasWidth - total width of viewport in canvas units
-     * @param pxixelWidth - total width of viewport in pixel units
+     * @param canvasMax - total size of dimension of viewport in canvas units 
+     * @param pixelMax - total size of dimension of viewport in pixel units
      * @returns 
      */
     static PixelToCanvas(pixel: number, canvasMax: number, pixelMax: number) : number {

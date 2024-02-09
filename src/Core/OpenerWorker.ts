@@ -2,7 +2,6 @@
 import { AudioData } from "../Types";
 import { v5 as uuidv5 } from 'uuid'
 import { RandomUInt8 } from "../Core/Utils";
-import { Audio } from "three";
 
 onmessage = async e => {
 
@@ -42,7 +41,7 @@ class Parser {
             }
 
             //these both mutate the passed in AudioData object
-            this._getViews(audioData);
+            //this._getViews(audioData);
             //await this._generateWaveform(audioData);
 
             return audioData;
@@ -53,65 +52,65 @@ class Parser {
         }
     }
 
-    /**
-     * 
-     * @param audioData 
-     * @note supports only 16 bit dtype at this time
-     */
-    protected async _generateWaveform(audioData: AudioData) : Promise<any> {
+    // /**
+    //  * 
+    //  * @param audioData 
+    //  * @note supports only 16 bit dtype at this time
+    //  */
+    // protected async _generateWaveform(audioData: AudioData) : Promise<any> {
 
-        // const stride = 400;
-        // const buffer = audioData.data.slice(audioData.start, audioData.end);
-        // const 
+    //     // const stride = 400;
+    //     // const buffer = audioData.data.slice(audioData.start, audioData.end);
+    //     // const 
 
 
-        // const waveForm = new Float32Array(left.length);
+    //     // const waveForm = new Float32Array(left.length);
         
-        // for (let i = 0, j = 0; i < left.length; i += stride, j++){
-        //     waveForm[j] = left[i];
-        // }
+    //     // for (let i = 0, j = 0; i < left.length; i += stride, j++){
+    //     //     waveForm[j] = left[i];
+    //     // }
 
-    }
+    // }
 
-    /**
-     * 
-     * @param audioData AudioData object
-     * @abstract mutates instance of passed in object by attaching a list of Float32 Typed Arrays, one per channel
-     * 
-     */
+    // /**
+    //  * 
+    //  * @param audioData AudioData object
+    //  * @abstract mutates instance of passed in object by attaching a list of Float32 Typed Arrays, one per channel
+    //  * 
+    //  */
 
-    protected _getViews(audioData: AudioData) : void {
+    // protected _getViews(audioData: AudioData) : void {
 
-        let result = [];
-        let srcElemView;
-        let typeDiv;
+    //     let result = [];
+    //     let srcElemView;
+    //     let typeDiv;
 
-        switch (audioData.dtype){
+    //     switch (audioData.dtype){
             
-            case 16:
-                srcElemView = new Int16Array(audioData.data, audioData.start);
-                typeDiv = 32767;
-                break;
-        }
+    //         case 16:
+    //             srcElemView = new Int16Array(audioData.data, audioData.start);
+    //             typeDiv = 32767;
+    //             break;
+    //     }
 
-        if (srcElemView && typeDiv){
+    //     if (srcElemView && typeDiv){
 
-            for (let ch = 0; ch < audioData.channels; ch++){
-                result.push(new Float32Array(srcElemView.length / audioData.channels));
-            }
+    //         for (let ch = 0; ch < audioData.channels; ch++){
+    //             result.push(new Float32Array(srcElemView.length / audioData.channels));
+    //         }
             
-            //let j = 0;
-            for (let i = 0, j = 0; i < srcElemView.length; i += audioData.channels, j++){
-                for (let ch = 0; ch < audioData.channels; ch++){
-                    result[ch][j] = srcElemView[i + ch] / typeDiv;
-                }
-                //j++
-            }
-        }
+    //         //let j = 0;
+    //         for (let i = 0, j = 0; i < srcElemView.length; i += audioData.channels, j++){
+    //             for (let ch = 0; ch < audioData.channels; ch++){
+    //                 result[ch][j] = srcElemView[i + ch] / typeDiv;
+    //             }
+    //             //j++
+    //         }
+    //     }
 
-        audioData.views = result
+    //     audioData.views = result
 
-    }
+    // }
 
     //this gets replaced with a server call
     protected _getBytes(path: string) : Promise<ArrayBuffer> {

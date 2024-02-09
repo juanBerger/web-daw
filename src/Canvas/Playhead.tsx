@@ -1,7 +1,6 @@
 import { useRef } from "react";
 
-import { useFrame } from "@react-three/fiber";
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from 'three';
 import { ScalePxToCanvas } from "../Core/Utils";
 

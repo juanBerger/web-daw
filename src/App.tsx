@@ -1,8 +1,9 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-import { Canvas } from '@react-three/fiber'
-import { useFrame } from "@react-three/fiber";
+import { Canvas, useFrame } from '@react-three/fiber'
+import { OrthographicCamera } from "@react-three/drei";
+
 import { Playhead } from "./Canvas/Playhead";
 import { Waveform } from "./Canvas/Waveform"
 
@@ -30,6 +31,16 @@ export default function App(){
 
     const [showStart, setShowStart] = useState<boolean>(true);
     const [waveforms, setWaveforms] = useState<ClipConstructor[]>([]);
+    const [cameraArgs, setCameraArgs] = useState<any>();
+
+    useEffect(() => {
+        const root = document.getElementById('app-root');
+        if (root)
+            setCameraArgs([root?.clientWidth / -2, root.clientWidth / 2, root.clientHeight / -2, root.clientHeight / 2, 1, 1000])
+    
+
+    }, []);
+
 
     const handleOnClick = async () => {    
         if(showStart){
@@ -63,12 +74,14 @@ export default function App(){
                 height: '100%',
                 width: '100%'
             }}>
-                <Canvas camera={{position: [0,0, 5]}}> 
-                    <ambientLight intensity={0.6} />
-                    <directionalLight intensity={0.6} position={[0, 0, 5]} />
+                <Canvas>
+                    <OrthographicCamera makeDefault position={[0, -220, 10]} args={cameraArgs}/>
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[10, 10, 10]} />
+                    
                     <Playhead/>
                     <TCListener/>
-                    {waveforms?.map(cc => <Waveform key={cc.clipId} cc={cc}/>)}
+                    {waveforms?.map(cc =><Waveform key={cc.clipId} cc={cc}/>)}
                 </Canvas>
             </div>}  
             
