@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from "react"
-
+import { useState, useEffect, useRef } from "react"
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrthographicCamera } from "@react-three/drei";
 
@@ -32,18 +31,25 @@ export default function App(){
     const [showStart, setShowStart] = useState<boolean>(true);
     const [waveforms, setWaveforms] = useState<ClipConstructor[]>([]);
     const [cameraArgs, setCameraArgs] = useState<any>();
+    const canvasRef = useRef<any>();
+    const cameraRef = useRef<any>();
 
-    useEffect(() => {
-        const root = document.getElementById('app-root');
-        if (root)
-            setCameraArgs([root?.clientWidth / -2, root.clientWidth / 2, root.clientHeight / -2, root.clientHeight / 2, 1, 1000])
     
-
-    }, []);
+    useEffect(() => {
+        setCameraArgs([document.body.scrollWidth / -2, document.body.scrollWidth / 2, document.body.scrollHeight / 2, document.body.scrollHeight / -2, 1, 1000]);
+    }, [document.body.scrollWidth, document.body.scrollHeight]); //
 
 
     const handleOnClick = async () => {    
+        
         if(showStart){
+
+            // console.log(cameraRef)
+            // cameraRef.current.left = -document.body.scrollWidth / 2;
+            // cameraRef.current.right = document.body.scrollWidth / 2;
+            // cameraRef.current.top = document.body.scrollHeight / 2;
+            // cameraRef.current.bottom = -document.body.scrollHeight / 2;
+            // cameraRef.current.updateProjectionMatrix(); --> Use this when we fire an event
             
             //set up audio process
             await AudioGraph.init();
@@ -74,8 +80,8 @@ export default function App(){
                 height: '100%',
                 width: '100%'
             }}>
-                <Canvas>
-                    <OrthographicCamera makeDefault position={[0, -220, 10]} args={cameraArgs}/>
+                <Canvas ref={canvasRef}>
+                    <OrthographicCamera makeDefault ref={cameraRef} position={[0, 0, 1]} args={cameraArgs}/>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} />
                     

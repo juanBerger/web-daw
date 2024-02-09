@@ -6,7 +6,7 @@ export class ClipConstructor {
     audioGraph: AudioGraph
     clipId: number //random Int32
     assetId: number //random Int32
-    left: number //frames
+    left: number //pixels
     top: number //pixels
     length: number //frames
     domRef: any //html element ref

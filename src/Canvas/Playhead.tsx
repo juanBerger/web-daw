@@ -1,16 +1,12 @@
 import { useRef } from "react";
+import { Mesh } from 'three';
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { Mesh } from 'three';
 import { ScalePxToCanvas } from "../Core/Utils";
+import { CanvasUtils } from "./CanvasUtils";
 
 import { TCMemory } from "../Core/TCMemory"
 import { ZoomHandler } from "../Core/ZoomHandler";
-
-/**
- * Some informative discussion?
- * https://github.com/pmndrs/react-three-fiber/issues/1892
- */
 
 export function Playhead() {
 
@@ -27,12 +23,13 @@ export function Playhead() {
     const playHead = useRef<Mesh>(null!);    
     
     useFrame(() => {
-        //const tc = TCMemory.sync();0
-        const pxPos = ZoomHandler.FramesToPixels(TCMemory.tc);
-        const canvasPos = ScalePxToCanvas(pxPos, size.width, W_UNIT_RATIO);
-       
+        const pos_px = ZoomHandler.FramesToPixels(TCMemory.tc);
+        const pos_world = CanvasUtils.scale(pos_px, 0,document.body.scrollWidth, document.body.scrollWidth / -2, document.body.scrollWidth / 2);
         
-        playHead.current.position.x = canvasPos;    
+        //const canvasPos = ScalePxToCanvas(pxPos, size.width, W_UNIT_RATIO);
+        //const pos_world = CanvasUtils.PixelToCanvas(pos_px, viewport.width, size.width);
+       
+        playHead.current.position.x = pos_world;    
     })
 
     return ( 
