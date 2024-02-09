@@ -23,13 +23,11 @@
                         start: number, //byte number, start of audio data
                         end: number, //byte number, end of audio data
                         data: ArrayBuffer //raw bytes, including header(s)/footer(s)
+                        views: [Float32Array, Float32Array]
                         }
                     
                     //Planar arrays for each channel, converted to Float32
-                    views: {
-                        0: Float32Array
-                        1: Float32Array
-                    }
+                    views: [Float32Array, Float32Array]
                 }
         }
  */
@@ -91,12 +89,11 @@ class AWP extends AudioWorkletProcessor {
 
         const left = this.assetMemory[assetId].views[0];
         
-        const stride = left.length / p_clipLength;
-        const waveForm = new Float32Array(Math.floor(p_clipLength));
+        // const stride = left.length / p_clipLength;
+        // const waveForm = new Float32Array(Math.floor(p_clipLength));
 
-
-        // const stride = 2000;
-        // const waveForm = new Float32Array(left.length);
+        const stride = 400;
+        const waveForm = new Float32Array(left.length);
         
         for (let i = 0, j = 0; i < left.length; i += stride, j++){
             waveForm[j] = left[i];

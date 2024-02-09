@@ -14,6 +14,7 @@ export interface AudioData {
     start: number,
     end: number,
     data: ArrayBuffer,
+    views?: Float32Array[]
 
 }
 

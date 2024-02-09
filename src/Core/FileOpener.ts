@@ -4,7 +4,7 @@ import { AudioGraph } from './AudioGraph';
 import { ClipConstructor } from './ClipConstructor';
 import { BytesToFrames, RandomUInt8 } from './Utils'
 
-const DEV = false;
+const DEV = true;
 
 export class FileOpener{
 

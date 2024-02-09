@@ -2,6 +2,7 @@
 import { AudioData } from "../Types";
 import { v5 as uuidv5 } from 'uuid'
 import { RandomUInt8 } from "../Core/Utils";
+import { Audio } from "three";
 
 onmessage = async e => {
 
@@ -40,12 +41,76 @@ class Parser {
                     audioData = new Error('Uknown Parsing Error')
             }
 
+            //these both mutate the passed in AudioData object
+            this._getViews(audioData);
+            //await this._generateWaveform(audioData);
+
             return audioData;
 
         } catch (error: any){ 
             audioData = error;
             throw audioData;
         }
+    }
+
+    /**
+     * 
+     * @param audioData 
+     * @note supports only 16 bit dtype at this time
+     */
+    protected async _generateWaveform(audioData: AudioData) : Promise<any> {
+
+        // const stride = 400;
+        // const buffer = audioData.data.slice(audioData.start, audioData.end);
+        // const 
+
+
+        // const waveForm = new Float32Array(left.length);
+        
+        // for (let i = 0, j = 0; i < left.length; i += stride, j++){
+        //     waveForm[j] = left[i];
+        // }
+
+    }
+
+    /**
+     * 
+     * @param audioData AudioData object
+     * @abstract mutates instance of passed in object by attaching a list of Float32 Typed Arrays, one per channel
+     * 
+     */
+
+    protected _getViews(audioData: AudioData) : void {
+
+        let result = [];
+        let srcElemView;
+        let typeDiv;
+
+        switch (audioData.dtype){
+            
+            case 16:
+                srcElemView = new Int16Array(audioData.data, audioData.start);
+                typeDiv = 32767;
+                break;
+        }
+
+        if (srcElemView && typeDiv){
+
+            for (let ch = 0; ch < audioData.channels; ch++){
+                result.push(new Float32Array(srcElemView.length / audioData.channels));
+            }
+            
+            //let j = 0;
+            for (let i = 0, j = 0; i < srcElemView.length; i += audioData.channels, j++){
+                for (let ch = 0; ch < audioData.channels; ch++){
+                    result[ch][j] = srcElemView[i + ch] / typeDiv;
+                }
+                //j++
+            }
+        }
+
+        audioData.views = result
+
     }
 
     //this gets replaced with a server call

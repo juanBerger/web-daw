@@ -1,4 +1,12 @@
 
+/**
+ * 
+ * This needs a cleanup function for unmounting
+ * 
+ * 
+ */
+
+
 import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { MouseHandler } from '../Core/MouseHandler';
 import { ClipConstructor } from '../Core/ClipConstructor';
@@ -26,7 +34,8 @@ export default function Clip(props: {cc: ClipConstructor}) {
             const wfBuffer = await props.cc.getWaveform();
             const wf = new Float32Array(wfBuffer);
             
-            const y_min = props.cc.domRef.current.clientHeight;
+            //const y_min = props.cc.domRef.current.clientHeight;
+            const y_min = 500;
             const y_max = 0;
 
             let path = '';
@@ -34,11 +43,37 @@ export default function Clip(props: {cc: ClipConstructor}) {
                 
                 const y = CanvasUtils.scale(wf[i], -1, 1, y_min, y_max);
                 const prefix = i === 0 ? 'M0' : 'L' + String(i);
-                path += prefix + ' ' + y + ' ';
+                path += prefix + ' ' + y + ' '; 
                     
             }
             
-            setPath(path);
+            const p = new Path2D(path);
+            const canvas = document.getElementById(String(props.cc.clipId) + '-cnv') as HTMLCanvasElement
+            
+            /**
+             * the size of this canvas should be the natural size of the waveform, taking into account what we have decided will be the stride
+             * in realtiy this is not the correct location for this.
+             */
+            if (canvas){
+                const ctx = canvas.getContext('2d');
+                if (ctx)
+                    ctx.fill(p);
+            }
+
+
+            
+
+
+            
+            // const canvas = document.createElement('canvas');
+            // canvas.width = imageBitmap.width;
+            // canvas.height = imageBitmap.height;
+            // const ctx = canvas.getContext('2d');
+            // ctx.drawImage(imageBitmap, 0, 0);
+
+
+
+            //setPath(path);
             
         })();
 
@@ -73,13 +108,15 @@ export default function Clip(props: {cc: ClipConstructor}) {
             style={{['--x' as any]: left, ['--y' as any]: top, ['--length' as any]: length}}
             onMouseDown={handleMouseDown}
             >
-            {/* <p>I'm a clip</p> */}
-            <svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
-                <path stroke="rgba(255, 221, 239, 0.8)" fill="transparent" d={path}/>
-            </svg>
+            <canvas id={String(props.cc.clipId) + '-cnv'} className='wf' width='960px' height='960px'/>
         </div>
     )
 
 
 }
 //viewBox='0 0 1800 60'
+
+//  {/* <p>I'm a clip</p> */}
+//  <svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6000 400'>
+//  <path stroke="rgba(255, 221, 239, 0.8)" fill="transparent" d={path}/>
+// </svg>
