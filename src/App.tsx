@@ -81,6 +81,7 @@ export default function App(){
                 width: '100%'
             }}>
                 <Canvas ref={canvasRef}>
+                    
                     <OrthographicCamera makeDefault ref={cameraRef} position={[0, 0, 1]} args={cameraArgs}/>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} />
@@ -88,6 +89,7 @@ export default function App(){
                     <Playhead/>
                     <TCListener/>
                     {waveforms?.map(cc =><Waveform key={cc.clipId} cc={cc}/>)}
+                    
                 </Canvas>
             </div>}  
             

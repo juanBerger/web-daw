@@ -4,7 +4,6 @@ import './index.css'
 
 
 window.onload = async () => {
-    console.log(import.meta.url)
     ReactDOM.createRoot(document.getElementById('app-root')!).render(
         // <React.StrictMode>
           <App />

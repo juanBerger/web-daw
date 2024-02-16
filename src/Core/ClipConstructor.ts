@@ -14,7 +14,6 @@ export class ClipConstructor {
     waveform: ArrayBuffer = new ArrayBuffer(1)
     data: SharedArrayBuffer = new SharedArrayBuffer(29)
 
-
     leftTrim?: number = 0 //frames
     rightTrim?: number = 0 //frames
     volume?: number = 1 //db
