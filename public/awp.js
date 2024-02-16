@@ -87,14 +87,10 @@ class AWP extends AudioWorkletProcessor {
 
     _getWaveform(assetId, p_clipLength){
 
-        const left = this.assetMemory[assetId].views[0];
-        
-        // const stride = left.length / p_clipLength;
-        // const waveForm = new Float32Array(Math.floor(p_clipLength));
-
-        const stride = 400;
+        const left = this.assetMemory[assetId].views[0]; //left channel view
+        const stride = 100;
         const waveForm = new Float32Array(left.length / stride);
-        
+
         for (let i = 0, j = 0; i < left.length; i += stride, j++){
             waveForm[j] = left[i];
         }

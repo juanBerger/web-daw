@@ -9,17 +9,16 @@ import { ZoomHandler } from "../Core/ZoomHandler";
 export function Waveform(props: {cc: ClipConstructor}){ 
     
     const [points, setPoints] = useState<Vector2[]>([new Vector2(0, 0), new Vector2(0, 0)]);
-    
     const lineRef = useRef<any>();
 
     //use the useFrame method here to check for updates in shared memory
     //you can get rms level from here etc.
 
-    useFrame(() => {
-        //
-        setPosition();
+    // useFrame(() => {
+    //     //
+    //     setPosition();
 
-    })
+    // })
 
     
     function setPosition() {
@@ -39,6 +38,8 @@ export function Waveform(props: {cc: ClipConstructor}){
 
     useEffect(() => {
         
+        props.cc.linePosCallback = setPosition;
+
         (async () => {
 
 
@@ -51,13 +52,13 @@ export function Waveform(props: {cc: ClipConstructor}){
             
             const vecs = []
             for (let i = 0; i < wf.length - 50; i++){
-                const y = CanvasUtils.scale(wf[i], -1, 1, clipHeight / -2, clipHeight /2);
+                const y = CanvasUtils.scale(wf[i], -1, 1, clipHeight / -2, clipHeight / 2);
                 vecs.push(new Vector2(i, y));
             }
 
             setPoints(vecs)
             if (lineRef.current){
-                lineRef.current.scale.set(scaleFactor, 2, 1);
+                lineRef.current.scale.set(scaleFactor, 1, 1);
                 setPosition();
             }
 

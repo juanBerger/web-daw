@@ -13,6 +13,8 @@ import { MouseHandler } from "./Core/MouseHandler";
 import { ClipConstructor } from "./Core/ClipConstructor";
 import './App.css'
 
+import { BuildSettings } from "./BuildSettings";
+
 /**
  * useFrame is called before r3f's next frame render. 
  * this is basically the same as requestAnimation frame. It's ok call useFrame inside of many components
@@ -88,7 +90,7 @@ export default function App(){
                     
                     <Playhead/>
                     <TCListener/>
-                    {waveforms?.map(cc =><Waveform key={cc.clipId} cc={cc}/>)}
+                    {BuildSettings.wfDrawing === 'canvas' && waveforms?.map(cc =><Waveform key={cc.clipId} cc={cc}/>)}
                     
                 </Canvas>
             </div>}  

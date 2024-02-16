@@ -16,6 +16,7 @@ import WaveSurfer from 'wavesurfer.js'
 
 import './Clip.css'
 import { AudioGraph } from '../Core/AudioGraph';
+import { BuildSettings } from '../BuildSettings';
 
 export default function Clip(props: {cc: ClipConstructor}) {
 
@@ -30,24 +31,25 @@ export default function Clip(props: {cc: ClipConstructor}) {
         StateManager.zoomLevelCallbacks.push(handleZoomChange);
         props.cc.setDomRef(clipRef);
         
-        (async () => {
-            const wfBuffer = await props.cc.getWaveform();
-            const wf = new Float32Array(wfBuffer);
-
-            const waveSurfer = WaveSurfer.create({
-                container: "#-wf-" + String(props.cc.clipId),
-                waveColor: 'rgb(200, 0, 200)',
-                progressColor: 'rgb(100, 0, 100)',
-                peaks: [wf],
-                height: 60, //this is hardcoded in the css for the parent div for now
-                duration: props.cc.length / AudioGraph.audioContext.sampleRate
-            })
+        if (BuildSettings.wfDrawing === 'ws'){
             
-            waveSurfer.unAll();
-
-        })();
-
-        
+            (async () => {
+                const wfBuffer = await props.cc.getWaveform();
+                const wf = new Float32Array(wfBuffer);
+    
+                const waveSurfer = WaveSurfer.create({
+                    container: "#-wf-" + String(props.cc.clipId),
+                    waveColor: 'rgb(200, 0, 200)',
+                    progressColor: 'rgb(100, 0, 100)',
+                    peaks: [wf],
+                    height: 60, //this is hardcoded in the css for the parent div for now
+                    duration: props.cc.length / AudioGraph.audioContext.sampleRate
+                })
+                
+                waveSurfer.unAll();
+    
+            })();
+        }
 
     }, []);
 

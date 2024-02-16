@@ -9,7 +9,10 @@ export class ClipConstructor {
     left: number //pixels
     top: number //pixels
     length: number //frames
+    
     domRef: any //html element ref
+    linePosCallback: any //we call this on a waveform component to update the canvas position, if it exists
+    //make this a stronger type
 
     waveform: ArrayBuffer = new ArrayBuffer(1)
     data: SharedArrayBuffer = new SharedArrayBuffer(29)
@@ -92,8 +95,13 @@ export class ClipConstructor {
      */
 
     syncPosition (l: number, t: number) {
+        
         this.left = l;
         this.top = t;
+
+        if(this.linePosCallback)
+            this.linePosCallback(l, t); 
+
         Atomics.store(this.sharedViews.left, 0, ZoomHandler.PixelsToFrames(this.left));
     }
 
